@@ -16,14 +16,15 @@ ostream &operator<<(ostream &output, ModelBase &model) {
                 output << (string) model[i] << endl;
                 model.getBuilder().add((string) model[i]);
                 break;
-            case TYPE_ARRAY_OF_MODEL:
-                vector<ModelBase *> modelArray = *(vector<ModelBase *> *) model[i];
-                output << modelArray.size() << endl;
-                model.getBuilder().add((int) modelArray.size());
-                for (int j = 0; j < modelArray.size(); ++j)
-                    output << modelArray[i]->with(model.getBuilder()) << endl;
-                break;
-            default:
+            case TYPE_MAP_OF_MODELS:
+                unordered_map<int, ModelBase *> mapModels = *(unordered_map<int, ModelBase *> *) model[i];
+                output << mapModels.size() << endl;
+                model.getBuilder().add((int) mapModels.size());
+                for (auto item : mapModels) {
+                    output << item.first << endl;
+                    model.getBuilder().add(item.first);
+                    output << item.second->with(model.getBuilder()) << endl;
+                }
                 break;
         }
     }
@@ -45,18 +46,17 @@ istream &operator>>(istream &input, ModelBase &model) {
                 model[i] = str;
                 model.getBuilder().add(str);
                 break;
-            case TYPE_ARRAY_OF_MODEL: /* TYPE_ARRAY_OF_MODEL */
+            case TYPE_MAP_OF_MODELS:
                 input >> integer;
                 model.getBuilder().add(integer);
-                vector<ModelBase *> modelArray;
+                unordered_map<int, ModelBase *> mapModels;
                 for (int j = 0; j < integer; ++j) {
                     ModelBase *temp = model.createVectorItem();
+                    input >> integer;
                     input >> temp->with(model.getBuilder());
-                    modelArray.push_back(temp);
+                    mapModels[integer] = temp;
                 }
-                model[i] = modelArray;
-                break;
-            default:
+                model[i] = mapModels;
                 break;
         }
     }

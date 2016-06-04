@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include "../utils/HashSum.hpp"
 
 using namespace std;
@@ -16,7 +17,7 @@ class ModelBase;
 enum DataType {
     TYPE_INTEGER,
     TYPE_STRING,
-    TYPE_ARRAY_OF_MODEL
+    TYPE_MAP_OF_MODELS
 };
 
 /**
@@ -26,11 +27,11 @@ class Object {
 public:
     Object(void *value) : value(value) {}
 
-    Object(string &str) : Object((void *) &str) {}
+    Object(string str) : Object((void *) &str) {}
 
-    Object(int &integer) : Object((void *) &integer) {}
+    Object(int integer) : Object((void *) &integer) {}
 
-    Object(vector<ModelBase *> &dataArray) : Object((void *) &dataArray) {}
+    Object(unordered_map<int, ModelBase *> dataArray) : Object((void *) &dataArray) {}
 
     operator int() {
         return *static_cast<int *>(value);
@@ -40,8 +41,8 @@ public:
         return *static_cast<string *>(value);
     }
 
-    operator vector<ModelBase *> *() {
-        return static_cast<vector<ModelBase *> *>(value);
+    operator unordered_map<int, ModelBase *> *() {
+        return static_cast<unordered_map<int, ModelBase *> *>(value);
     }
 
     operator void *() {
@@ -54,7 +55,22 @@ protected:
 
 class ModelBase {
 public:
-    ModelBase() { data.assign(getFieldCount(), Object(nullptr)); }
+
+    ModelBase() {
+        /* Assign default value */
+        for (int i = 0; i < getFieldCount(); ++i)
+            switch (getFieldType(i)) {
+                case TYPE_INTEGER:
+                    data.push_back(new int(0));
+                    break;
+                case TYPE_STRING:
+                    data.push_back(new Object(""));
+                    break;
+                case TYPE_MAP_OF_MODELS:
+                    data.push_back(new unordered_map<int, ModelBase *>);
+                    break;
+            }
+    }
 
 
     Object &operator[](size_t index) {

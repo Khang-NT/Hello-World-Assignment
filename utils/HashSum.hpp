@@ -43,6 +43,14 @@ public:
         int code;
     };
 
+    operator int() {
+        return code;
+    }
+
+    operator string() {
+        return to_string(code);
+    }
+
 private:
     int code = 0;
 };
