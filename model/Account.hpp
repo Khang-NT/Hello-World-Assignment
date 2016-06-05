@@ -9,6 +9,8 @@
 #include <assert.h>
 #include "ModelBase.hpp"
 
+static const int LEVEL_ADMIN = 0, LEVEL_MANAGER = 1, LEVEL_GUEST = 2;
+
 class Account : public ModelBase {
 public:
     Account() : ModelBase() {}
@@ -24,9 +26,12 @@ public:
         return getUserName() == userName;
     }
 
-    bool match(string userName, string password) {
-        return match(userName) &&
-               *HashSum::Builder().add(password).build() == getPasswordHash();
+    bool matchPassword(string password) {
+        return *HashSum::Builder().add(password).build() == getPasswordHash();
+    }
+
+    bool match(int userId) {
+        return getUserId() == userId;
     }
 
     int getUserId() {

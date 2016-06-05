@@ -15,20 +15,53 @@ public:
     AccountManager() : ModelBase() {}
 
     unsigned getAccountCount() {
-        return (unsigned) getAccountMap().size();
+        return (unsigned) getAccountList().size();
     }
 
-    Account &operator[](int accountId) {
-        return *static_cast<Account *>(getAccountMap()[accountId]);
+    Account &operator[](int position) {
+        return *static_cast<Account *>(getAccountList()[position]);
     }
 
-    Account &getAccountAt(int position) {
-        unordered_map<int, ModelBase *>::iterator it = getAccountMap().begin();
-        advance(it, position);
-        return *static_cast<Account *>((*it).second);
+    int findAccountWith(string userName) {
+        int i = 0;
+        for (auto account : getAccountList())
+            if (((Account *) account)->match(userName))
+                return i;
+            else i++;
+        return -1;
     }
 
-    bool
+    int findAccountWith(string userName, string password) {
+        int position = findAccountWith(userName);
+        return position == -1 || !(*this)[position].matchPassword(password) ?
+               -1 : position;
+    }
+
+    int findAccountWith(int userId) {
+        int i = 0;
+        for (auto account : getAccountList())
+            if (((Account *) account)->match(userId))
+                return i;
+            else i++;
+        return -1;
+    }
+
+    void createAccount(string userName, string password, int level) {
+        ModelBase *account = new Account(
+                increaseUniqueIndex(),
+                userName,
+                password,
+                level
+        );
+        getAccountList().push_back(account);
+    }
+
+    void changePassword(int userId, string newPassword) {
+        int position = findAccountWith(userId);
+        if (position > 0)
+            (*this)[position].setPassword(newPassword);
+    }
+
 protected:
     static const int FIELD_COUNT = 2;
     static const int AUTO_INCREASE_NUMBER = 0;
@@ -49,9 +82,14 @@ protected:
         }
     }
 
-    unordered_map<int, ModelBase *> &getAccountMap() {
-        return *(unordered_map<int, ModelBase *> *) ModelBase::operator[](MAP_OF_ACCOUNTS);
+    vector<ModelBase *> &getAccountList() {
+        return ModelBase::operator[](MAP_OF_ACCOUNTS);
     };
+
+    int increaseUniqueIndex() {
+        int currentIndex = ModelBase::operator[](AUTO_INCREASE_NUMBER);
+        return ModelBase::operator[](AUTO_INCREASE_NUMBER) = ++currentIndex;
+    }
 };
 
 
