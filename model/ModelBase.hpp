@@ -17,7 +17,7 @@ class ModelBase;
 enum DataType {
     TYPE_INTEGER,
     TYPE_STRING,
-    TYPE_MAP_OF_MODELS
+    TYPE_ARRAY_OF_MODELS
 };
 
 /**
@@ -31,7 +31,7 @@ public:
 
     Object(int integer) : Object((void *) &integer) {}
 
-    Object(unordered_map<int, ModelBase *> dataArray) : Object((void *) &dataArray) {}
+    Object(vector<ModelBase *> dataArray) : Object((void *) &dataArray) {}
 
     operator int() {
         return *static_cast<int *>(value);
@@ -41,8 +41,8 @@ public:
         return *static_cast<string *>(value);
     }
 
-    operator unordered_map<int, ModelBase *> *() {
-        return static_cast<unordered_map<int, ModelBase *> *>(value);
+    operator vector<ModelBase *>() {
+        return *static_cast<vector<ModelBase *> *>(value);
     }
 
     operator void *() {
@@ -66,14 +66,14 @@ public:
                 case TYPE_STRING:
                     data.push_back(new Object(""));
                     break;
-                case TYPE_MAP_OF_MODELS:
+                case TYPE_ARRAY_OF_MODELS:
                     data.push_back(new unordered_map<int, ModelBase *>);
                     break;
             }
     }
 
 
-    Object &operator[](size_t index) {
+    virtual Object &operator[](size_t index) {
         return data[index];
     }
 

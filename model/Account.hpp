@@ -92,6 +92,10 @@ protected:
                 assert(false);
         }
     }
+
+    virtual Object &operator[](size_t index) override {
+        return ModelBase::operator[](index);
+    }
 };
 
 

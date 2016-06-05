@@ -16,15 +16,12 @@ ostream &operator<<(ostream &output, ModelBase &model) {
                 output << (string) model[i] << endl;
                 model.getBuilder().add((string) model[i]);
                 break;
-            case TYPE_MAP_OF_MODELS:
-                unordered_map<int, ModelBase *> mapModels = *(unordered_map<int, ModelBase *> *) model[i];
-                output << mapModels.size() << endl;
-                model.getBuilder().add((int) mapModels.size());
-                for (auto item : mapModels) {
-                    output << item.first << endl;
-                    model.getBuilder().add(item.first);
-                    output << item.second->with(model.getBuilder()) << endl;
-                }
+            case TYPE_ARRAY_OF_MODELS:
+                vector<ModelBase *> dataArray = (vector<ModelBase *>) model[i];
+                output << dataArray.size() << endl;
+                model.getBuilder().add((int) dataArray.size());
+                for (auto item : dataArray)
+                    output << item->with(model.getBuilder()) << endl;
                 break;
         }
     }
@@ -46,17 +43,16 @@ istream &operator>>(istream &input, ModelBase &model) {
                 model[i] = str;
                 model.getBuilder().add(str);
                 break;
-            case TYPE_MAP_OF_MODELS:
-                input >> integer;
+            case TYPE_ARRAY_OF_MODELS:
+                input >> integer; // read size of data array
                 model.getBuilder().add(integer);
-                unordered_map<int, ModelBase *> mapModels;
+                vector<ModelBase *> dataArray;
                 for (int j = 0; j < integer; ++j) {
                     ModelBase *temp = model.createVectorItem();
-                    input >> integer;
                     input >> temp->with(model.getBuilder());
-                    mapModels[integer] = temp;
+                    dataArray.push_back(temp);
                 }
-                model[i] = mapModels;
+                model[i] = dataArray;
                 break;
         }
     }
