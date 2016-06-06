@@ -13,7 +13,12 @@ class Product : public ModelBase {
 public:
     Product() : ModelBase() {}
 
-    ModelBase &initialize(int produceId, string name, string manufacturer, string category, int price, int warrantyDays,
+    Product &initialize() override {
+        ModelBase::initialize();
+        return *this;
+    }
+
+    Product &initialize(int produceId, string name, string manufacturer, string category, int price, int warrantyDays,
                           int count = 0) {
         ModelBase::initialize();
         setProductId(produceId)
@@ -24,6 +29,10 @@ public:
                 .setWarranty(warrantyDays)
                 .setProductCount(count);
         return *this;
+    }
+
+    bool match(int id) {
+        return getProductId() == id;
     }
 
     Product &setProductId(int id) {

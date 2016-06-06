@@ -29,11 +29,10 @@ public:
     }
 
     int findAccountWith(string userName) {
-        int i = 0;
-        for (auto account : *getAccountList())
-            if (((Account *) account)->match(userName))
+        vector<ModelBase *> accountList = *getAccountList();
+        for (int i = 0; i < accountList.size(); ++i)
+            if (((Account *) accountList[i])->match(userName))
                 return i;
-            else i++;
         return -1;
     }
 
@@ -44,11 +43,10 @@ public:
     }
 
     int findAccountWith(int userId) {
-        int i = 0;
-        for (auto account : *getAccountList())
-            if (((Account *) account)->match(userId))
+        vector<ModelBase *> accountList = *getAccountList();
+        for (int i = 0; i < accountList.size(); ++i)
+            if (((Account *) accountList[i])->match(userId))
                 return i;
-            else i++;
         return -1;
     }
 

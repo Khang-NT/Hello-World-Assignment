@@ -15,11 +15,12 @@ class Account : public ModelBase {
 public:
     Account() : ModelBase() {}
 
-    ModelBase &initialize() {
+    Account &initialize() override {
         ModelBase::initialize();
+        return *this;
     }
 
-    ModelBase &initialize(int userId, string userName, string password, int level) {
+    Account &initialize(int userId, string userName, string password, int level) {
         ModelBase::initialize();
         setUserId(userId)
                 .setUserName(userName)

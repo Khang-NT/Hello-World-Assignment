@@ -6,7 +6,11 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(SOURCE_FILES
         main.cpp
         model/ModelBase.cpp model/ModelBase.hpp
+        model/Account.hpp
+        model/AccountManager.hpp
+        model/Product.hpp
+        model/ProductManager.hpp
         utils/HashSum.hpp
         utils/Utils.cpp utils/Utils.hpp
-        model/Account.cpp model/Account.hpp model/AccountManager.cpp model/AccountManager.hpp model/Product.cpp model/Product.hpp model/ProductManager.cpp model/ProductManager.hpp)
+        utils/MenuHelper.cpp utils/MenuHelper.hpp)
 add_executable(CppAssignment ${SOURCE_FILES})
