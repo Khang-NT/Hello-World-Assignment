@@ -38,23 +38,22 @@ public:
      * If it wasn't created, do initialization with default data (include admin account).
      * @return (AccountManager &) singleton instance of AccountManager.
      */
-    static ProductManager &getInstance() {
+    static ProductManager *getInstance() {
         if (sInstance)
-            return *sInstance;
-        else {
-            try {
-                sInstance = Utils::deserialize<ProductManager>(ITEM_DB_FILE);
-            } catch (const char *e) {
-                printf("Error while reading file %s: %s\n", ITEM_DB_FILE, e);
-                printf("Do you want to continue process and override file %s with empty data (y/n)? ");
-                if (Utils::yesOrNo()) {
-                    /* Write default data */
-                    sInstance = &(new ProductManager())->initialize();
-                    sInstance->saveChange();
-                } else
-                    exit(0);
-            }
+            return sInstance;
+        try {
+            sInstance = Utils::deserialize<ProductManager>(ITEM_DB_FILE);
+        } catch (const char *e) {
+            printf("Error while reading file %s: %s\n", ITEM_DB_FILE, e);
+            printf("Do you want to continue process and override file %s with empty data (y/n)? ");
+            if (Utils::yesOrNo()) {
+                /* Write default data (empty) */
+                sInstance = &(new ProductManager())->initialize();
+                sInstance->saveChange();
+            } else
+                exit(0);
         }
+        return sInstance;
     }
 
     /**
@@ -62,7 +61,7 @@ public:
      * @return (unsigned) number of existing products.
      */
     static unsigned getProductCount() {
-        return (unsigned) getInstance().getProductList()->size();
+        return (unsigned) getInstance()->getProductList()->size();
     }
 
     /**
@@ -71,7 +70,7 @@ public:
      * @return (Product) a COPY of product object at position.
      */
     static Product getProductAt(int position) {
-        return *static_cast<Product *>((*getInstance().getProductList())[position]);
+        return *static_cast<Product *>((*getInstance()->getProductList())[position]);
     }
 
     /**
@@ -80,7 +79,7 @@ public:
      * @return position of product matches given ID or -1 if not found.
      */
     static int findProduct(int productId) {
-        vector<ModelBase *> productList = *getInstance().getProductList();
+        vector<ModelBase *> productList = *getInstance()->getProductList();
         for (int i = 0; i < productList.size(); ++i)
             if (((Product *) productList[i])->match(productId))
                 return i;
@@ -99,13 +98,13 @@ public:
      */
     static Product addProduct(string name, string manufacturer, string category, int price, int warrantyDays,
                         int count = 0) {
-        ProductManager productManager = getInstance();
+        ProductManager *productManager = getInstance();
         Product *product = &(new Product())->initialize(
-                productManager.increaseUniqueIndex(),
+                productManager->increaseUniqueIndex(),
                 name, manufacturer, category, price,
                 warrantyDays, count
         );
-        productManager.getProductList()->push_back(product);
+        productManager->getProductList()->push_back(product);
         return *product;
     }
 
@@ -116,9 +115,9 @@ public:
      * @param newData (Product)
      */
     static void updateProduct(int position, Product newData) {
-        ProductManager manager = getInstance();
-        *(*manager.getProductList())[position] = newData;
-        manager.saveChange();
+        ProductManager *manager = getInstance();
+        *(*manager->getProductList())[position] = newData;
+        manager->saveChange();
     }
 protected:
     static const int FIELD_COUNT = 3;

@@ -22,6 +22,12 @@ const string ADMIN_PASSWORD = "admin";
  * @see class Account
  */
 class AccountManager : public ModelBase {
+private:
+    /**
+     * Singleton instance
+     */
+    static AccountManager *sInstance;
+
 public:
     AccountManager() : ModelBase() {}
 
@@ -41,24 +47,23 @@ public:
      * If it wasn't created, do initialization with default data (include admin account).
      * @return (AccountManager &) singleton instance of AccountManager.
      */
-    static AccountManager &getInstance() {
+    static AccountManager *getInstance() {
         if (sInstance)
-            return *sInstance;
-        else {
-            try {
-                sInstance = Utils::deserialize<AccountManager>(USER_DB_FILE);
-            } catch (const char *e) {
-                cout << "Error: " << e << endl;
-                printf("Do you want to continue process and override file %s as default (y/n)? ",
-                       USER_DB_FILE.c_str());
-                if (Utils::yesOrNo()) {
-                    /* Write default data */
-                    sInstance = &(new AccountManager())->initialize();
-                    createAccount(ADMIN_NAME, ADMIN_PASSWORD, LEVEL_ADMIN);
-                } else
-                    exit(0);
-            }
+            return sInstance;
+        try {
+            sInstance = Utils::deserialize<AccountManager>(USER_DB_FILE);
+        } catch (const char *e) {
+            cout << "Error: " << e << endl;
+            printf("Do you want to continue process and override file %s as default (y/n)? ",
+                   USER_DB_FILE.c_str());
+            if (Utils::yesOrNo()) {
+                /* Write default data */
+                sInstance = &(new AccountManager())->initialize();
+                createAccount(ADMIN_NAME, ADMIN_PASSWORD, LEVEL_ADMIN);
+            } else
+                exit(0);
         }
+        return sInstance;
     }
 
     /**
@@ -66,7 +71,7 @@ public:
      * @return (unsigned) number of existing accounts.
      */
     static unsigned getAccountCount() {
-        return (unsigned) getInstance().getAccountList()->size();
+        return (unsigned) getInstance()->getAccountList()->size();
     }
 
     /**
@@ -75,7 +80,7 @@ public:
      * @return (Account) a copy of account object at position.
      */
     static Account getAccountAt(int position) {
-        return *static_cast<Account *>((*getInstance().getAccountList())[position]);
+        return *static_cast<Account *>((*getInstance()->getAccountList())[position]);
     }
 
     /**
@@ -86,7 +91,7 @@ public:
      * given username if found, if not return -1;
      */
     static int findAccountWith(string userName) {
-        vector<ModelBase *> accountList = *getInstance().getAccountList();
+        vector<ModelBase *> accountList = *getInstance()->getAccountList();
         for (int i = 0; i < accountList.size(); ++i)
             if (((Account *) accountList[i])->match(userName))
                 return i;
@@ -115,7 +120,7 @@ public:
      * given userId, if not return -1;
      */
     static int findAccountWith(int userId) {
-        vector<ModelBase *> accountList = *getInstance().getAccountList();
+        vector<ModelBase *> accountList = *getInstance()->getAccountList();
         for (int i = 0; i < accountList.size(); ++i)
             if (((Account *) accountList[i])->match(userId))
                 return i;
@@ -130,15 +135,15 @@ public:
      * @param level (int) level is one of (LEVEL_ADMIN, LEVEL_MANAGER, LEVEL_GUEST).
      */
     static void createAccount(string userName, string password, int level) {
-        AccountManager accountManager = getInstance();
+        AccountManager *accountManager = getInstance();
         ModelBase *account = &(new Account())->initialize(
-                accountManager.increaseUniqueIndex(),
+                accountManager->increaseUniqueIndex(),
                 userName,
                 password,
                 level
         );
-        accountManager.getAccountList()->push_back(account);
-        accountManager.saveChange();
+        accountManager->getAccountList()->push_back(account);
+        accountManager->saveChange();
     }
 
     /**
@@ -148,13 +153,13 @@ public:
      * @param newPassword (string) new password.
      */
     static void changePassword(int userId, string newPassword) {
-        AccountManager accountManager = getInstance();
+        AccountManager *accountManager = getInstance();
         int position = findAccountWith(userId);
         if (position > 0) {
-            vector<ModelBase *> accountList = *getInstance().getAccountList();
+            vector<ModelBase *> accountList = *getInstance()->getAccountList();
             ((Account *) accountList[position])->setPassword(newPassword);
         }
-        accountManager.saveChange();
+        accountManager->saveChange();
     }
 
     /**
@@ -162,9 +167,9 @@ public:
      * @param position (int) position of account to be removed.
      */
     static void removeAccountAt(int position) {
-        vector<ModelBase *> *accountList = getInstance().getAccountList();
+        vector<ModelBase *> *accountList = getInstance()->getAccountList();
         accountList->erase(accountList->begin() + position);
-        getInstance().saveChange();
+        getInstance()->saveChange();
     }
 
 protected:
@@ -172,11 +177,6 @@ protected:
     static const int HEADER = 0;
     static const int AUTO_INCREASE_NUMBER = 1;
     static const int ARRAY_OF_ACCOUNTS = 2;
-
-    /**
-     * Singleton instance
-     */
-    static AccountManager *sInstance;
 
     virtual unsigned int getFieldCount() override {
         return FIELD_COUNT;
@@ -205,8 +205,8 @@ protected:
     };
 
     int increaseUniqueIndex() {
-        int currentIndex = getInstance()[AUTO_INCREASE_NUMBER];
-        return getInstance()[AUTO_INCREASE_NUMBER] = ++currentIndex;
+        int currentIndex = (*getInstance())[AUTO_INCREASE_NUMBER];
+        return (*getInstance())[AUTO_INCREASE_NUMBER] = ++currentIndex;
     }
 
     void saveChange() {
@@ -222,5 +222,6 @@ protected:
     }
 };
 
+AccountManager *AccountManager::sInstance = nullptr;
 
 #endif //CPPASSIGNMENT_ACCOUNTMANAGER_HPP

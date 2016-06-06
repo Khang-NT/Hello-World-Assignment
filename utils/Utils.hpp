@@ -33,8 +33,8 @@ namespace Utils {
     template<typename T, typename = typename std::enable_if<std::is_base_of<ModelBase, T>::value, T>::type>
     inline T *deserialize(string fileName) throw(const char*) {
         ifstream file(fileName);
-        file.exceptions(ifstream::failbit | ifstream::badbit);
         if (file.is_open()) {
+            file.exceptions(ifstream::failbit | ifstream::badbit);
             HashSum::Builder builder;
             T *result = new T();
             result->initialize();

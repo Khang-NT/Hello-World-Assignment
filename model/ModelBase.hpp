@@ -108,25 +108,25 @@ public:
 
     ModelBase() {}
 
-    /* Copy constructor */
-    ModelBase(ModelBase &model) {
-        data.clear();
-        /* Copy value */
-        for (int i = 0; i < model.getFieldCount(); ++i)
-            switch (model.getFieldType(i)) {
-                case TYPE_INTEGER:
-                    data.push_back(new Object((int) model[i]));
-                    break;
-                case TYPE_STRING:
-                    data.push_back(new Object((string) model[i]));
-                    break;
-                case TYPE_ARRAY_OF_MODELS:
-                    data.push_back(new Object(*model[i].operator vector<ModelBase *> *()));
-                    break;
-            }
-        /* copy pointer - using same builder */
-        this->builder = model.builder;
-    }
+//    /* Copy constructor */
+//    ModelBase(ModelBase &model) {
+//        data.clear();
+//        /* Copy value */
+//        for (int i = 0; i < model.getFieldCount(); ++i)
+//            switch (model.getFieldType(i)) {
+//                case TYPE_INTEGER:
+//                    data.push_back(new Object((int) model[i]));
+//                    break;
+//                case TYPE_STRING:
+//                    data.push_back(new Object((string) model[i]));
+//                    break;
+//                case TYPE_ARRAY_OF_MODELS:
+//                    data.push_back(new Object(*model[i].operator vector<ModelBase *> *()));
+//                    break;
+//            }
+//        /* copy pointer - using same builder */
+//        this->builder = model.builder;
+//    }
 
     /**
      * IMPORTANT! Call this first, before everythings.
