@@ -55,8 +55,7 @@ namespace Utils {
             throw "File does not exist!";
     };
 
-    template<typename T, typename = typename std::enable_if<std::is_base_of<ModelBase, T>::value, T>::type>
-    inline void serialize(T model, string fileName) throw(const char*) {
+    inline void serialize(ModelBase &model, string fileName) throw(const char*) {
         ofstream file;
         file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
         try {

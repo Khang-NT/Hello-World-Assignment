@@ -11,6 +11,12 @@
 
 static const int LEVEL_ADMIN = 0, LEVEL_MANAGER = 1, LEVEL_GUEST = 2;
 
+/**
+ * Inherit class ModelBase. <br>
+ * This class stores account properties: id, user name, password, level.
+ * @see class ModelBase
+ * @see class AccountManager
+ */
 class Account : public ModelBase {
 public:
     Account() : ModelBase() {}
@@ -29,7 +35,7 @@ public:
         return *this;
     }
 
-
+    /* check match with given unique properties value */
     bool match(string userName) {
         return getUserName() == userName;
     }
@@ -42,6 +48,7 @@ public:
         return getUserId() == userId;
     }
 
+    /* set / get */
     int getUserId() {
         return (*this)[USER_ID];
     }
@@ -73,6 +80,11 @@ public:
         return *this;
     }
 
+    /**
+     * Password will be transformed to hash code.
+     * @param password (string)
+     * @return (Account&) itself.
+     */
     Account &setPassword(string password) {
         return setPasswordHash(HashSum::Builder().add(password).build());
     }

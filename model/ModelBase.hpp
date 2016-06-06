@@ -25,7 +25,7 @@ enum DataType {
  */
 class Object {
 public:
-
+    /* Constructors */
     Object(string str) : Object(new string(str)) { dataType = TYPE_STRING; }
 
     Object(int integer) : Object(new int(integer)) { dataType = TYPE_INTEGER; }
@@ -33,6 +33,7 @@ public:
     Object(vector<ModelBase *> dataArray) :
             Object(new vector<ModelBase *>(dataArray)) { dataType = TYPE_ARRAY_OF_MODELS; }
 
+    /* Operator conversion */
     operator vector<ModelBase *> *() {
         return static_cast<vector<ModelBase *> *>(value);
     }
@@ -45,6 +46,11 @@ public:
         return *static_cast<string *>(value);
     }
 
+    operator void *() {
+        return value;
+    }
+
+    /* operator = (copy assignment) */
     Object &operator=(int newValue) {
         freeMem();
         value = new int(newValue);
@@ -63,10 +69,7 @@ public:
         dataType = TYPE_ARRAY_OF_MODELS;
     }
 
-    operator void *() {
-        return value;
-    }
-
+    /* Destructor */
     ~Object() {
         freeMem();
     }
@@ -93,11 +96,21 @@ protected:
     }
 };
 
+/**
+ * ModelBase is abstract class, provide ability serializing and deserializing (as string)
+ * to stream. Class design as a table, rows store in vector<Object *>, column with 3 data type.
+ * @see class Object
+ * @see enum DataType
+ */
 class ModelBase {
 public:
 
     ModelBase() {}
 
+    /**
+     * Initialization with default value.
+     * @return (ModelBase&)itself.
+     */
     virtual ModelBase &initialize() {
         /* Assign default value */
         for (int i = 0; i < getFieldCount(); ++i)
@@ -129,10 +142,20 @@ public:
         return *builder;
     }
 
+    /**
+     * Get number of fields (columns) in data table.
+     * @return (int) number of fields (columns).
+     */
     virtual unsigned int getFieldCount() {
         return 0;
     }
 
+    /**
+     * Get field (column) type at filedIndex.
+     * @param fieldIndex field (column) index.
+     * @return (DataType) data type.
+     * @see enum DataType.
+     */
     virtual DataType getFieldType(int &fieldIndex) {
         return DataType::TYPE_INTEGER;
     };
@@ -149,8 +172,20 @@ protected:
     HashSum::Builder *builder;
 };
 
+/**
+ * Serialize to output stream.
+ * @param output (ostream)
+ * @param model (ModelBase&)
+ * @return (ostream &)
+ */
 ostream &operator<<(ostream &output, ModelBase &modelBase);
 
+/**
+ * Deserialize from input stream.
+ * @param input (istream)
+ * @param model (ModelBase&)
+ * @return (istream&)
+ */
 istream &operator>>(istream &input, ModelBase &modelBase);
 
 

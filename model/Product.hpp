@@ -9,6 +9,12 @@
 #include <assert.h>
 #include "ModelBase.hpp"
 
+/**
+ * Inherit class ModelBase. <br>
+ * This class stores product properties: id, name, manufacturer, category, price, warranty time, number avalable.
+ * @see class ModelBase
+ * @see class ProductManager
+ */
 class Product : public ModelBase {
 public:
     Product() : ModelBase() {}
@@ -31,10 +37,12 @@ public:
         return *this;
     }
 
+    /* check if matching with unique properties */
     bool match(int id) {
         return getProductId() == id;
     }
 
+    /* set / get */
     Product &setProductId(int id) {
         (*this)[ID] = id;
         (*this)[LAST_MODIFIED] = time(nullptr);

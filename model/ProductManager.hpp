@@ -10,6 +10,12 @@
 #include "ModelBase.hpp"
 #include "Product.hpp"
 
+/**
+ * Inherit class ModelBase. <br>
+ * This class provides feature managing products (count, search, add, update).
+ * @see class ModelBase
+ * @see class Product
+ */
 class ProductManager : public ModelBase {
 public:
     ProductManager() : ModelBase() {}

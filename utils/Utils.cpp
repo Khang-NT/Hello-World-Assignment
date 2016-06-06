@@ -11,7 +11,7 @@ namespace Utils {
         } while (s == "");
     }
 
-    bool yesNo() {
+    bool yesOrNo() {
         char c = ' ';
         while (c != 'Y' && c != 'y' && c != 'N' && c != 'n') {
             std::cin >> c;
