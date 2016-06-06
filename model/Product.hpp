@@ -13,9 +13,9 @@ class Product : public ModelBase {
 public:
     Product() : ModelBase() {}
 
-    Product(int produceId, string name, string manufacturer, string category, int price, int warrantyDays,
-            int count = 0)
-            : Product() {
+    ModelBase &initialize(int produceId, string name, string manufacturer, string category, int price, int warrantyDays,
+                          int count = 0) {
+        ModelBase::initialize();
         setProductId(produceId)
                 .setProductName(name)
                 .setManufacturer(manufacturer)
@@ -23,47 +23,48 @@ public:
                 .setPrice(price)
                 .setWarranty(warrantyDays)
                 .setProductCount(count);
+        return *this;
     }
 
     Product &setProductId(int id) {
         (*this)[ID] = id;
-        (*this)[LAST_MODIFIED] = (int) time(0);
+        (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 
     Product &setProductName(string name) {
         (*this)[NAME] = name;
-        (*this)[LAST_MODIFIED] = (int) time(0);
+        (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 
     Product &setManufacturer(string manufacturer) {
         (*this)[MANUFACTURER] = manufacturer;
-        (*this)[LAST_MODIFIED] = (int) time(0);
+        (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 
     Product &setCategory(string category) {
         (*this)[CATEGORY] = category;
-        (*this)[LAST_MODIFIED] = (int) time(0);
+        (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 
     Product &setPrice(int price) {
         (*this)[PRICE] = price;
-        (*this)[LAST_MODIFIED] = (int) time(0);
+        (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 
     Product &setWarranty(int warrantyDays) {
         (*this)[WARRANTY_DAYS] = warrantyDays;
-        (*this)[LAST_MODIFIED] = (int) time(0);
+        (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 
     Product &setProductCount(int count) {
         (*this)[PRODUCT_COUNT] = count;
-        (*this)[LAST_MODIFIED] = (int) time(0);
+        (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 

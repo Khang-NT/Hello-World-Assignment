@@ -8,5 +8,5 @@ set(SOURCE_FILES
         model/ModelBase.cpp model/ModelBase.hpp
         utils/HashSum.hpp
         utils/Utils.cpp utils/Utils.hpp
-        model/Account.cpp model/Account.hpp model/AccountManager.cpp model/AccountManager.hpp model/Product.cpp model/Product.hpp)
+        model/Account.cpp model/Account.hpp model/AccountManager.cpp model/AccountManager.hpp model/Product.cpp model/Product.hpp model/ProductManager.cpp model/ProductManager.hpp)
 add_executable(CppAssignment ${SOURCE_FILES})

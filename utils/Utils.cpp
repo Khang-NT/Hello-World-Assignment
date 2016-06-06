@@ -8,7 +8,7 @@ namespace Utils {
     void getLine(std::istream &stream, std::string &s) {
         do {
             std::getline(stream, s);
-        } while (s.compare("") == 0);
+        } while (s == "");
     }
 
     bool yesNo() {

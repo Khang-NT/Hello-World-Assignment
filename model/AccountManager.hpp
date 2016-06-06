@@ -14,17 +14,23 @@ class AccountManager : public ModelBase {
 public:
     AccountManager() : ModelBase() {}
 
+    AccountManager &initialize() override {
+        ModelBase::initialize();
+        ModelBase::operator[](HEADER) = "MT2015-Users";
+        return *this;
+    }
+
     unsigned getAccountCount() {
-        return (unsigned) getAccountList().size();
+        return (unsigned) getAccountList()->size();
     }
 
     Account &operator[](int position) {
-        return *static_cast<Account *>(getAccountList()[position]);
+        return *static_cast<Account *>((*getAccountList())[position]);
     }
 
     int findAccountWith(string userName) {
         int i = 0;
-        for (auto account : getAccountList())
+        for (auto account : *getAccountList())
             if (((Account *) account)->match(userName))
                 return i;
             else i++;
@@ -39,7 +45,7 @@ public:
 
     int findAccountWith(int userId) {
         int i = 0;
-        for (auto account : getAccountList())
+        for (auto account : *getAccountList())
             if (((Account *) account)->match(userId))
                 return i;
             else i++;
@@ -47,13 +53,13 @@ public:
     }
 
     void createAccount(string userName, string password, int level) {
-        ModelBase *account = new Account(
+        ModelBase *account = &(new Account())->initialize(
                 increaseUniqueIndex(),
                 userName,
                 password,
                 level
         );
-        getAccountList().push_back(account);
+        getAccountList()->push_back(account);
     }
 
     void changePassword(int userId, string newPassword) {
@@ -63,9 +69,10 @@ public:
     }
 
 protected:
-    static const int FIELD_COUNT = 2;
-    static const int AUTO_INCREASE_NUMBER = 0;
-    static const int MAP_OF_ACCOUNTS = 1;
+    static const int FIELD_COUNT = 3;
+    static const int HEADER = 0;
+    static const int AUTO_INCREASE_NUMBER = 1;
+    static const int ARRAY_OF_ACCOUNTS = 2;
 
     virtual unsigned int getFieldCount() override {
         return FIELD_COUNT;
@@ -73,17 +80,24 @@ protected:
 
     virtual DataType getFieldType(int &fieldIndex) override {
         switch (fieldIndex) {
+            case HEADER:
+                return TYPE_STRING;
             case AUTO_INCREASE_NUMBER:
                 return TYPE_INTEGER;
-            case MAP_OF_ACCOUNTS:
+            case ARRAY_OF_ACCOUNTS:
                 return TYPE_ARRAY_OF_MODELS;
             default:
                 assert(false);
         }
     }
 
-    vector<ModelBase *> &getAccountList() {
-        return ModelBase::operator[](MAP_OF_ACCOUNTS);
+    virtual ModelBase *createVectorItem() {
+        return &(new Account())->initialize();
+    }
+
+
+    vector<ModelBase *> *getAccountList() {
+        return ModelBase::operator[](ARRAY_OF_ACCOUNTS);
     };
 
     int increaseUniqueIndex() {

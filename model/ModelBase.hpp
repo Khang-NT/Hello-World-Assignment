@@ -25,13 +25,17 @@ enum DataType {
  */
 class Object {
 public:
-    Object(void *value) : value(value) {}
 
-    Object(string str) : Object((void *) &str) {}
+    Object(string str) : Object(new string(str)) { dataType = TYPE_STRING; }
 
-    Object(int integer) : Object((void *) &integer) {}
+    Object(int integer) : Object(new int(integer)) { dataType = TYPE_INTEGER; }
 
-    Object(vector<ModelBase *> dataArray) : Object((void *) &dataArray) {}
+    Object(vector<ModelBase *> dataArray) :
+            Object(new vector<ModelBase *>(dataArray)) { dataType = TYPE_ARRAY_OF_MODELS; }
+
+    operator vector<ModelBase *> *() {
+        return static_cast<vector<ModelBase *> *>(value);
+    }
 
     operator int() {
         return *static_cast<int *>(value);
@@ -41,40 +45,79 @@ public:
         return *static_cast<string *>(value);
     }
 
-    operator vector<ModelBase *>() {
-        return *static_cast<vector<ModelBase *> *>(value);
+    Object &operator=(int newValue) {
+        freeMem();
+        value = new int(newValue);
+        dataType = TYPE_INTEGER;
+    }
+
+    Object &operator=(string newValue) {
+        freeMem();
+        value = new string(newValue);
+        dataType = TYPE_STRING;
+    }
+
+    Object &operator=(vector<ModelBase *> newValue) {
+        freeMem();
+        value = new vector<ModelBase *>(newValue);
+        dataType = TYPE_ARRAY_OF_MODELS;
     }
 
     operator void *() {
         return value;
     }
 
+    ~Object() {
+        freeMem();
+    }
+
 protected:
-    void *value;
+    void *value = nullptr;
+    DataType dataType;
+
+    Object(void *value) : value(value) {}
+
+    void freeMem() {
+        if (value != nullptr)
+            switch (dataType) {
+                case TYPE_STRING:
+                    delete static_cast<string *>(value);
+                    break;
+                case TYPE_INTEGER:
+                    delete static_cast<int *>(value);
+                    break;
+                case TYPE_ARRAY_OF_MODELS:
+                    delete static_cast<vector<ModelBase *> *>(value);
+            }
+        value = nullptr;
+    }
 };
 
 class ModelBase {
 public:
 
-    ModelBase() {
+    ModelBase() {}
+
+    virtual ModelBase &initialize() {
         /* Assign default value */
         for (int i = 0; i < getFieldCount(); ++i)
             switch (getFieldType(i)) {
                 case TYPE_INTEGER:
-                    data.push_back(new int(0));
+                    data.push_back(new Object(int(0)));
                     break;
                 case TYPE_STRING:
-                    data.push_back(new Object(""));
+                    data.push_back(new Object(string("")));
                     break;
                 case TYPE_ARRAY_OF_MODELS:
-                    data.push_back(new unordered_map<int, ModelBase *>);
+                    data.push_back(new Object(vector<ModelBase *>(0)));
                     break;
             }
+        return *this;
     }
 
 
     virtual Object &operator[](size_t index) {
-        return data[index];
+        return *data[index];
     }
 
     ModelBase &with(HashSum::Builder &builder) {
@@ -98,8 +141,11 @@ public:
         return new ModelBase();
     }
 
+    ~ModelBase() {
+        data.clear();
+    }
 protected:
-    vector<Object> data;
+    vector<Object *> data;
     HashSum::Builder *builder;
 };
 

@@ -15,12 +15,19 @@ class Account : public ModelBase {
 public:
     Account() : ModelBase() {}
 
-    Account(int userId, string userName, string password, int level) : Account() {
+    ModelBase &initialize() {
+        ModelBase::initialize();
+    }
+
+    ModelBase &initialize(int userId, string userName, string password, int level) {
+        ModelBase::initialize();
         setUserId(userId)
                 .setUserName(userName)
                 .setPassword(password)
                 .setLevel(level);
+        return *this;
     }
+
 
     bool match(string userName) {
         return getUserName() == userName;
@@ -75,7 +82,7 @@ public:
     }
 
 protected:
-    static const int FIELD_COUNT = 5;
+    static const int FIELD_COUNT = 4;
     static const int USER_ID = 0;
     static const int USER_NAME = 1;
     static const int PASSWORD_HASH = 2;
