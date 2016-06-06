@@ -35,7 +35,7 @@ public:
     }
 
     bool matchPassword(string password) {
-        return *HashSum::Builder().add(password).build() == getPasswordHash();
+        return HashSum::Builder().add(password).build() == getPasswordHash();
     }
 
     bool match(int userId) {
@@ -74,7 +74,7 @@ public:
     }
 
     Account &setPassword(string password) {
-        return setPasswordHash(*HashSum::Builder().add(password).build());
+        return setPasswordHash(HashSum::Builder().add(password).build());
     }
 
     Account &setLevel(int level) {

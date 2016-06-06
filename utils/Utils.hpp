@@ -9,14 +9,11 @@
 #include <iosfwd>
 #include <istream>
 #include <iostream>
+#include <fstream>
+#include "../model/ModelBase.hpp"
 
 namespace Utils {
     void getLine(std::istream &stream, std::string &s);
-
-    template<typename Base, typename T>
-    inline bool instanceOf(const T *) {
-        return std::is_base_of<Base, T>::value;
-    }
 
     /**
      * Require user choose Yes or No
@@ -32,6 +29,46 @@ namespace Utils {
      * @see Account::TYPE_ADMIN Account::TYPE_MANAGER Account::TYPE_CUSTOMER
      */
     void doSignUp(int accountType);
+
+    template<typename T, typename = typename std::enable_if<std::is_base_of<ModelBase, T>::value, T>::type>
+    inline T *deserialize(string fileName) throw(const char*) {
+        ifstream file(fileName);
+        file.exceptions(ifstream::failbit | ifstream::badbit);
+        if (file.is_open()) {
+            HashSum::Builder builder;
+            T *result = new T();
+            result->initialize();
+            try {
+                file >> result->with(builder);
+                int hashCode;
+                file >> hashCode;
+                file.close();
+                if (hashCode == builder.build())
+                    return result;
+                else
+                    throw "Hash sum mismatch.";
+            } catch (std::ios_base::failure &) {
+                file.close();
+                throw "File struct invalid.";
+            }
+        } else
+            throw "File does not exist!";
+    };
+
+    template<typename T, typename = typename std::enable_if<std::is_base_of<ModelBase, T>::value, T>::type>
+    inline void serialize(T model, string fileName) throw(const char*) {
+        ofstream file;
+        file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
+        try {
+            file.open(fileName);
+            HashSum::Builder builder;
+            file << model.with(builder);
+            file << builder.build();
+            file.close();
+        } catch (std::ofstream::failure &e) {
+            throw e.what();
+        }
+    };
 }
 
 

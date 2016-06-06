@@ -14,12 +14,7 @@ using namespace std;
 #define A 76963
 #define B 86969
 
-class HashSum {
-public:
-    HashSum() : HashSum(0) {}
-
-    HashSum(int code) : code(code) {}
-
+namespace HashSum {
     class Builder {
     public:
         Builder() : code(51) {};
@@ -35,25 +30,14 @@ public:
             return add(s);
         };
 
-        HashSum *build() {
-            return new HashSum(code);
+        int build() {
+            return code;
         }
 
-    private:
+    protected:
         int code;
     };
-
-    operator int() {
-        return code;
-    }
-
-    operator string() {
-        return to_string(code);
-    }
-
-private:
-    int code = 0;
-};
+}
 
 
 #endif //CPPASSIGNMENT_HASHSUM_HPP
