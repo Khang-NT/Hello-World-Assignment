@@ -98,6 +98,7 @@ protected:
 
 /**
  * ModelBase is abstract class, provide ability serializing and deserializing (as string)
+ * and common interfaces to interact with data.
  * to stream. Class design as a table, rows store in vector<Object *>, column with 3 data type.
  * @see class Object
  * @see enum DataType
@@ -107,9 +108,29 @@ public:
 
     ModelBase() {}
 
+    /* Copy constructor */
+    ModelBase(ModelBase &model) {
+        data.clear();
+        /* Copy value */
+        for (int i = 0; i < model.getFieldCount(); ++i)
+            switch (model.getFieldType(i)) {
+                case TYPE_INTEGER:
+                    data.push_back(new Object((int) model[i]));
+                    break;
+                case TYPE_STRING:
+                    data.push_back(new Object((string) model[i]));
+                    break;
+                case TYPE_ARRAY_OF_MODELS:
+                    data.push_back(new Object(*model[i].operator vector<ModelBase *> *()));
+                    break;
+            }
+        /* copy pointer - using same builder */
+        this->builder = model.builder;
+    }
+
     /**
-     * Initialization with default value.
-     * @return (ModelBase&)itself.
+     * IMPORTANT! Call this first, before everythings.
+     * @return (ModelBase&) reference itself.
      */
     virtual ModelBase &initialize() {
         /* Assign default value */

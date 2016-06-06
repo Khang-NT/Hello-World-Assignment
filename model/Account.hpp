@@ -21,11 +21,19 @@ class Account : public ModelBase {
 public:
     Account() : ModelBase() {}
 
+    /**
+     * IMPORTANT! Call this first, before everythings.
+     * @return (Account&) reference itself.
+     */
     Account &initialize() override {
         ModelBase::initialize();
         return *this;
     }
 
+    /**
+     * IMPORTANT! Call this first, before everythings.
+     * @return (Account&) reference itself.
+     */
     Account &initialize(int userId, string userName, string password, int level) {
         ModelBase::initialize();
         setUserId(userId)

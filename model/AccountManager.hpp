@@ -11,7 +11,7 @@
 #include "Account.hpp"
 #include "../utils/Utils.hpp"
 
-const string DB_FILE = "UserDB.dat";
+const string USER_DB_FILE = "UserDB.dat";
 const string ADMIN_NAME = "admin";
 const string ADMIN_PASSWORD = "admin";
 
@@ -25,31 +25,32 @@ class AccountManager : public ModelBase {
 public:
     AccountManager() : ModelBase() {}
 
+    /**
+     * IMPORTANT! Call this first, before everythings.
+     * @return (AccountManager&) reference itself.
+     */
     AccountManager &initialize() override {
         ModelBase::initialize();
         ModelBase::operator[](HEADER) = "MT2015-Users";
         return *this;
     }
 
-    /**
-     * Singlestone instance
-     */
-    static AccountManager *sInstance;
 
     /**
-     * Get singlestone instance.
+     * Get singleton instance. <br>
      * If it wasn't created, do initialization with default data (include admin account).
-     * @return (AccountManager &) singlestone instance of AccountManager.
+     * @return (AccountManager &) singleton instance of AccountManager.
      */
     static AccountManager &getInstance() {
         if (sInstance)
             return *sInstance;
         else {
             try {
-                sInstance = Utils::deserialize<AccountManager>(DB_FILE);
+                sInstance = Utils::deserialize<AccountManager>(USER_DB_FILE);
             } catch (const char *e) {
                 cout << "Error: " << e << endl;
-                printf("Do you want to continue process and override file %s as default (y/n)? ");
+                printf("Do you want to continue process and override file %s as default (y/n)? ",
+                       USER_DB_FILE.c_str());
                 if (Utils::yesOrNo()) {
                     /* Write default data */
                     sInstance = &(new AccountManager())->initialize();
@@ -69,11 +70,11 @@ public:
     }
 
     /**
-     * Get reference of account at given position.
+     * Get a copy of account object at given position.
      * @param position (int)
-     * @return (Account &) reference of account at position.
+     * @return (Account) a copy of account object at position.
      */
-    static Account &getAccountAt(int position) {
+    static Account getAccountAt(int position) {
         return *static_cast<Account *>((*getInstance().getAccountList())[position]);
     }
 
@@ -122,7 +123,7 @@ public:
     }
 
     /**
-     * Open new account, new data will be stored to disk automatically.
+     * Open new account, new data will be stored to disk automatically. <br>
      * Password will be encoded with Hash algorithm.
      * @param userName (string) user name
      * @param password (string) password.
@@ -141,7 +142,7 @@ public:
     }
 
     /**
-     * Change password of account which maches given ID, new data will be stored to disk automatically.
+     * Change password of account which maches given ID, new data will be stored to disk automatically. <br>
      * Password will be encoded with Hash algorithm.
      * @param userId (int) user name
      * @param newPassword (string) new password.
@@ -149,9 +150,21 @@ public:
     static void changePassword(int userId, string newPassword) {
         AccountManager accountManager = getInstance();
         int position = findAccountWith(userId);
-        if (position > 0)
-            accountManager.getAccountAt(position).setPassword(newPassword);
+        if (position > 0) {
+            vector<ModelBase *> accountList = *getInstance().getAccountList();
+            ((Account *) accountList[position])->setPassword(newPassword);
+        }
         accountManager.saveChange();
+    }
+
+    /**
+     * Remove account at position in account list.
+     * @param position (int) position of account to be removed.
+     */
+    static void removeAccountAt(int position) {
+        vector<ModelBase *> *accountList = getInstance().getAccountList();
+        accountList->erase(accountList->begin() + position);
+        getInstance().saveChange();
     }
 
 protected:
@@ -159,6 +172,11 @@ protected:
     static const int HEADER = 0;
     static const int AUTO_INCREASE_NUMBER = 1;
     static const int ARRAY_OF_ACCOUNTS = 2;
+
+    /**
+     * Singleton instance
+     */
+    static AccountManager *sInstance;
 
     virtual unsigned int getFieldCount() override {
         return FIELD_COUNT;
@@ -193,9 +211,9 @@ protected:
 
     void saveChange() {
         try {
-            Utils::serialize(*this, DB_FILE);
+            Utils::serialize(*this, USER_DB_FILE);
         } catch (const char *e) {
-            cout << "Update file " << DB_FILE << " error: " << e << endl;
+            cout << "Update file " << USER_DB_FILE << " error: " << e << endl;
             cout << "Warning: All changes will be aborted after closed program?\n"
                     "Do you want to retry (y/n)? ";
             if (Utils::yesOrNo())

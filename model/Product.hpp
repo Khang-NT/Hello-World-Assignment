@@ -19,11 +19,19 @@ class Product : public ModelBase {
 public:
     Product() : ModelBase() {}
 
+    /**
+     * IMPORTANT! Call this first, before everythings.
+     * @return (Product&) reference itself.
+     */
     Product &initialize() override {
         ModelBase::initialize();
         return *this;
     }
 
+    /**
+     * IMPORTANT! Call this first, before everythings.
+     * @return (Product&) reference itself.
+     */
     Product &initialize(int produceId, string name, string manufacturer, string category, int price, int warrantyDays,
                           int count = 0) {
         ModelBase::initialize();
@@ -79,14 +87,27 @@ public:
         return *this;
     }
 
+    /**
+     * Set number of products available.
+     * @param count the number of products available.
+     * @return (Product&) reference itself.
+     */
     Product &setProductCount(int count) {
-        (*this)[PRODUCT_COUNT] = count;
+        (*this)[ITEM_COUNT] = count;
         (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
 
-    Product &changeProductCount(int offset) {
-        return setProductCount(getProductCount() + offset);
+    /**
+     * Update number of products available.
+     * @param offset changing offset
+     * @return (Product&) reference itself.
+     * @example
+     * <li> changeItemCount(-2); // sold 2 products, remove them in "available" products.
+     * <li> changeItemCount(5); // import 5 products to  "available" products will be sold.
+     */
+    Product &changeItemCount(int offset) {
+        return setProductCount(getItemCount() + offset);
     }
 
     int getProductId() {
@@ -113,8 +134,8 @@ public:
         return (*this)[CATEGORY];
     }
 
-    int getProductCount() {
-        return (*this)[PRODUCT_COUNT];
+    int getItemCount() {
+        return (*this)[ITEM_COUNT];
     }
 
     int getLastModifiedTime() {
@@ -127,7 +148,7 @@ protected:
     static const int NAME = 1;
     static const int PRICE = 2;
     static const int WARRANTY_DAYS = 3;
-    static const int PRODUCT_COUNT = 4;
+    static const int ITEM_COUNT = 4;
     static const int MANUFACTURER = 5;
     static const int CATEGORY = 6;
     static const int LAST_MODIFIED = 7;
@@ -141,7 +162,7 @@ protected:
             case ID:
             case PRICE:
             case WARRANTY_DAYS:
-            case PRODUCT_COUNT:
+            case ITEM_COUNT:
             case LAST_MODIFIED:
                 return TYPE_INTEGER;
             case NAME:
