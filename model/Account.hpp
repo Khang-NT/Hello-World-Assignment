@@ -27,35 +27,20 @@ public:
      * IMPORTANT! Call this first, before everythings.
      * @return (Account&) reference itself.
      */
-    Account &initialize() override {
-        ModelBase::initialize();
-        return *this;
-    }
+    Account &initialize() override;
 
     /**
      * IMPORTANT! Call this first, before everythings.
      * @return (Account&) reference itself.
      */
-    Account &initialize(int userId, string userName, string staffId, string password, int level) {
-        ModelBase::initialize();
-        setUserId(userId)
-                .setUserName(userName)
-                .setStaffId(staffId)
-                .setPassword(password)
-                .setLevel(level)
-                .modified()
-                .loggedIn();
-        return *this;
-    }
+    Account &initialize(int userId, string userName, string staffId, string password, int level);
 
     /* check match with given unique properties value */
     bool match(string userName) {
         return getUserName() == userName;
     }
 
-    bool matchPassword(string password) {
-        return HashSum::Builder().add(password).build() == getPasswordHash();
-    }
+    bool matchPassword(string password);
 
     bool match(int userId) {
         return getUserId() == userId;
@@ -78,16 +63,7 @@ public:
         return (*this)[USER_LEVEL];
     }
 
-    const char *getLevelAsString() {
-        switch (getLevel()) {
-            case LEVEL_ADMIN:
-                return "Admin";
-            case LEVEL_MANAGER:
-                return "Store Manager";
-            default:
-                return "Unknown";
-        }
-    }
+    const char *getLevelAsString();
 
     int getLastModified() {
         return (*this)[LAST_MODIFIED];
@@ -159,21 +135,7 @@ protected:
         return FIELD_COUNT;
     }
 
-    virtual DataType getFieldType(int &fieldIndex) const override {
-        switch (fieldIndex) {
-            case USER_ID:
-            case PASSWORD_HASH:
-            case USER_LEVEL:
-            case LAST_MODIFIED:
-            case LAST_LOGIN:
-                return TYPE_INTEGER;
-            case USER_NAME:
-            case STAFF_ID:
-                return TYPE_STRING;
-            default:
-                assert(false);
-        }
-    }
+    virtual DataType getFieldType(int &fieldIndex) const override;
 
     virtual Object &operator[](size_t index) const override {
         return ModelBase::operator[](index);

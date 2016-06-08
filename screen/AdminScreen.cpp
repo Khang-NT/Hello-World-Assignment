@@ -6,11 +6,12 @@
 #include "../utils/MenuHelper.hpp"
 #include "../utils/Utils.hpp"
 #include "../model/AccountManager.hpp"
+#include "../utils/ExportHTML.hpp"
 
 namespace AdminScreen {
 
-    void openAccountsViewer() {
-
+    void openAccountListSnapshot() {
+        ExportHTML::exportAccountList();
     }
 
     void openManagerControlPanel() {
@@ -18,9 +19,9 @@ namespace AdminScreen {
     }
 
     void promptOpenAccountsViewer(const char *why) {
-        printf("%sDo you want open Accounts viewer (Y/N)? ", why);
+        printf("%sDo you want open Accounts list Snapshot (Y/N)? ", why);
         if (Utils::yesOrNo()) {
-            //openAccountsViewer();
+            openAccountListSnapshot();
         }
     }
 
@@ -95,7 +96,7 @@ namespace AdminScreen {
                 ->addItem("Open new manager account", createManagerAccount)
                 ->addItem("Remove an account", removeAnAccount)
                 ->addItem("Reset an account's password", resetAnAccountPassword)
-                ->addItem("Open Accounts viewer", openAccountsViewer)
+                ->addItem("Open Accounts list Snapshot", openAccountListSnapshot)
                 ->addItem("Open manager control panel", openManagerControlPanel);
         adminMenu->run(true);
         delete adminMenu;

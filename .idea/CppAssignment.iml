@@ -4,17 +4,20 @@
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/model/ProductManager.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/model/Account.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/model/ModelBase.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/Account.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/AccountManager.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/ModelBase.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/Product.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/AccountManager.hpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/model/ModelBase.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/model/ProductManager.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/template/AccountListTemplate.hpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/screen/LoginScreen.cpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/screen/AdminScreen.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/screen/LoginScreen.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/screen/ManagerScreen.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/screen/AdminScreen.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/screen/LoginScreen.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/screen/ManagerScreen.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/screen/AdminScreen.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/ExportHTML.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/utils/DateTimeFormat.hpp" isTestSource="false" />

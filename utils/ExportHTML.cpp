@@ -7,7 +7,6 @@
 #include "DateTimeFormat.hpp"
 
 #include <algorithm>
-#include <unistd.h>
 
 using namespace std;
 
@@ -23,30 +22,13 @@ namespace ExportHTML {
 #endif
     }
 
-    std::string open_temp(std::string path, std::ofstream &f) {
-        std::vector<char> dst_path(path.begin(), path.end());
-        dst_path.push_back('\0');
-
-        int fd = mkstemp(&dst_path[0]);
-        if (fd != -1) {
-            path.assign(dst_path.begin(), dst_path.end() - 1);
-            f.open(path.c_str(),
-                   std::ios_base::trunc | std::ios_base::out);
-            close(fd);
-        }
-        return path;
-    }
-
-
-    unsigned long replaceString(std::string &subject, const std::string &search,
-                                const std::string &replace, unsigned repeatTime = 1) {
+    void replaceString(std::string &subject, const std::string &search,
+                       const std::string &replace, unsigned repeatTime = 1) {
         unsigned long pos = 0;
         for (int i = 0; i < repeatTime; ++i) {
             pos = subject.find(search, pos);
             subject.replace(pos, search.length(), replace);
         }
-
-        return pos;
     }
 
     void exportAccountList() {

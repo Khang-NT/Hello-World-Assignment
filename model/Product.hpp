@@ -153,11 +153,11 @@ protected:
     static const int CATEGORY = 6;
     static const int LAST_MODIFIED = 7;
 
-    virtual unsigned int getFieldCount() override {
+    virtual unsigned int getFieldCount() const override {
         return FIELD_COUNT;
     }
 
-    virtual DataType getFieldType(int &fieldIndex) override {
+    virtual DataType getFieldType(int &fieldIndex) const override {
         switch (fieldIndex) {
             case ID:
             case PRICE:

@@ -5,6 +5,43 @@
 #include "ModelBase.hpp"
 #include "../utils/Utils.hpp"
 
+ModelBase::ModelBase(const ModelBase &model) {
+    data.clear();
+    /* Copy value */
+    for (int i = 0; i < model.getFieldCount(); ++i)
+        switch (model.getFieldType(i)) {
+            case TYPE_INTEGER:
+                data.push_back(new Object((int) model[i]));
+                break;
+            case TYPE_STRING:
+                data.push_back(new Object((string) model[i]));
+                break;
+            case TYPE_ARRAY_OF_MODELS:
+                data.push_back(new Object(*model[i].operator vector<ModelBase *> *()));
+                break;
+        }
+    /* copy pointer - using same builder */
+    this->builder = model.builder;
+}
+
+ModelBase &ModelBase::initialize() {
+    data.clear();
+    /* Assign default value */
+    for (int i = 0; i < getFieldCount(); ++i)
+        switch (getFieldType(i)) {
+            case TYPE_INTEGER:
+                data.push_back(new Object(int(0)));
+                break;
+            case TYPE_STRING:
+                data.push_back(new Object(string("")));
+                break;
+            case TYPE_ARRAY_OF_MODELS:
+                data.push_back(new Object(vector<ModelBase *>(0)));
+                break;
+        }
+    return *this;
+}
+
 ostream &operator<<(ostream &output, ModelBase &model) {
     for (int i = 0; i < model.getFieldCount(); ++i) {
         switch (model.getFieldType(i)) {
@@ -63,3 +100,17 @@ istream &operator>>(istream &input, ModelBase &model) {
 }
 
 
+void Object::freeMem() {
+    if (value != nullptr)
+        switch (dataType) {
+            case TYPE_STRING:
+                delete static_cast<string *>(value);
+                break;
+            case TYPE_INTEGER:
+                delete static_cast<int *>(value);
+                break;
+            case TYPE_ARRAY_OF_MODELS:
+                delete static_cast<vector<ModelBase *> *>(value);
+        }
+    value = nullptr;
+}
