@@ -1,9 +1,11 @@
 #include <iostream>
-#include "model/AccountManager.hpp"
+#include "screen/LoginScreen.hpp"
+#include "utils/ExportHTML.hpp"
 
 using namespace std;
 
-int main() {
-    AccountManager::createAccount("Test", "2123", LEVEL_MANAGER);
+int main(int argsCount, char *args[]) {
+    ExportHTML::exportAccountList();
+    LoginScreen::start();
     return 0;
 }

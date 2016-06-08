@@ -9,7 +9,9 @@
 #include <assert.h>
 #include "ModelBase.hpp"
 
-static const int LEVEL_ADMIN = 0, LEVEL_MANAGER = 1, LEVEL_GUEST = 2;
+static const int LEVEL_ADMIN = 0, LEVEL_MANAGER = 1;
+static const int PASSWORD_MIN_LENGTH = 5, USER_NAME_MIN_LENGTH = 5;
+static const int USER_NAME_MAX_LENGTH = 15;
 
 /**
  * Inherit class ModelBase. <br>
@@ -34,12 +36,15 @@ public:
      * IMPORTANT! Call this first, before everythings.
      * @return (Account&) reference itself.
      */
-    Account &initialize(int userId, string userName, string password, int level) {
+    Account &initialize(int userId, string userName, string staffId, string password, int level) {
         ModelBase::initialize();
         setUserId(userId)
                 .setUserName(userName)
+                .setStaffId(staffId)
                 .setPassword(password)
-                .setLevel(level);
+                .setLevel(level)
+                .modified()
+                .loggedIn();
         return *this;
     }
 
@@ -73,6 +78,29 @@ public:
         return (*this)[USER_LEVEL];
     }
 
+    const char *getLevelAsString() {
+        switch (getLevel()) {
+            case LEVEL_ADMIN:
+                return "Admin";
+            case LEVEL_MANAGER:
+                return "Store Manager";
+            default:
+                return "Unknown";
+        }
+    }
+
+    int getLastModified() {
+        return (*this)[LAST_MODIFIED];
+    }
+
+    int getLastLoginTime() {
+        return (*this)[LAST_LOGIN];
+    }
+
+    string getStaffId() {
+        return (*this)[STAFF_ID];
+    }
+
     Account &setUserId(int id) {
         (*this)[USER_ID] = id;
         return *this;
@@ -102,31 +130,52 @@ public:
         return *this;
     }
 
+    Account &setStaffId(string staffId) {
+        (*this)[STAFF_ID] = staffId;
+        return *this;
+    }
+
+    Account &modified() {
+        (*this)[LAST_MODIFIED] = time(0);
+        return *this;
+    }
+
+    Account &loggedIn() {
+        (*this)[LAST_LOGIN] = time(0);
+        return *this;
+    }
+
 protected:
-    static const int FIELD_COUNT = 4;
+    static const int FIELD_COUNT = 7;
     static const int USER_ID = 0;
     static const int USER_NAME = 1;
     static const int PASSWORD_HASH = 2;
     static const int USER_LEVEL = 3;
+    static const int LAST_MODIFIED = 4;
+    static const int LAST_LOGIN = 5;
+    static const int STAFF_ID = 6;
 
-    virtual unsigned int getFieldCount() override {
+    virtual unsigned int getFieldCount() const override {
         return FIELD_COUNT;
     }
 
-    virtual DataType getFieldType(int &fieldIndex) override {
+    virtual DataType getFieldType(int &fieldIndex) const override {
         switch (fieldIndex) {
             case USER_ID:
             case PASSWORD_HASH:
             case USER_LEVEL:
+            case LAST_MODIFIED:
+            case LAST_LOGIN:
                 return TYPE_INTEGER;
             case USER_NAME:
+            case STAFF_ID:
                 return TYPE_STRING;
             default:
                 assert(false);
         }
     }
 
-    virtual Object &operator[](size_t index) override {
+    virtual Object &operator[](size_t index) const override {
         return ModelBase::operator[](index);
     }
 };

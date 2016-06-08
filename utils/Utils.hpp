@@ -6,11 +6,11 @@
 #define ASSIGNMENT_UTILS_HPP
 
 
-#include <iosfwd>
-#include <istream>
-#include <iostream>
+#include <ostream>
 #include <fstream>
+#include <cstring>
 #include "../model/ModelBase.hpp"
+
 
 namespace Utils {
     void getLine(std::istream &stream, std::string &s);
@@ -23,18 +23,37 @@ namespace Utils {
 
     void clearScreen();
 
+    void pause();
+
     /**
      * Show sign up form and add new account to AccountManager if sign up success.
-     * @param accountType account type to create.
-     * @see Account::TYPE_ADMIN Account::TYPE_MANAGER Account::TYPE_CUSTOMER
+     * @param level level account to be created.
+     * @see LEVEL_ADMIN, LEVEL_MANAGER, LEVEL_GUEST
      */
-    void doSignUp(int accountType);
+    void doSignUp(int level);
+
+    /**
+     * Show reset password form to update password of user. <br>
+     * Password will be tranformed to hash code.
+     * @param userId user ID of account to be updated.
+     */
+    void doResetPassword(int userId);
+
+
 
     template<typename T, typename = typename std::enable_if<std::is_base_of<ModelBase, T>::value, T>::type>
-    inline T *deserialize(string fileName) throw(const char*) {
+    inline T *deserialize(string fileName, string header) throw(const char*) {
         ifstream file(fileName);
         if (file.is_open()) {
             file.exceptions(ifstream::failbit | ifstream::badbit);
+            if (header != "") {
+                string fileHeader;
+                getLine(file, fileHeader);
+                if (fileHeader != header) {
+                    file.close();
+                    throw "Unknown file header.";
+                }
+            }
             HashSum::Builder builder;
             T *result = new T();
             result->initialize();
@@ -55,11 +74,13 @@ namespace Utils {
             throw "File does not exist!";
     };
 
-    inline void serialize(ModelBase &model, string fileName) throw(const char*) {
+    inline void serialize(ModelBase &model, string fileName, string header = "") throw(const char*) {
         ofstream file;
         file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
         try {
             file.open(fileName);
+            if (header != "")
+                file << header << endl;
             HashSum::Builder builder;
             file << model.with(builder);
             file << builder.build();

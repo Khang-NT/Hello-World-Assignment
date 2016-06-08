@@ -108,31 +108,32 @@ public:
 
     ModelBase() {}
 
-//    /* Copy constructor */
-//    ModelBase(ModelBase &model) {
-//        data.clear();
-//        /* Copy value */
-//        for (int i = 0; i < model.getFieldCount(); ++i)
-//            switch (model.getFieldType(i)) {
-//                case TYPE_INTEGER:
-//                    data.push_back(new Object((int) model[i]));
-//                    break;
-//                case TYPE_STRING:
-//                    data.push_back(new Object((string) model[i]));
-//                    break;
-//                case TYPE_ARRAY_OF_MODELS:
-//                    data.push_back(new Object(*model[i].operator vector<ModelBase *> *()));
-//                    break;
-//            }
-//        /* copy pointer - using same builder */
-//        this->builder = model.builder;
-//    }
+    /* Copy constructor */
+    ModelBase(const ModelBase &model) {
+        data.clear();
+        /* Copy value */
+        for (int i = 0; i < model.getFieldCount(); ++i)
+            switch (model.getFieldType(i)) {
+                case TYPE_INTEGER:
+                    data.push_back(new Object((int) model[i]));
+                    break;
+                case TYPE_STRING:
+                    data.push_back(new Object((string) model[i]));
+                    break;
+                case TYPE_ARRAY_OF_MODELS:
+                    data.push_back(new Object(*model[i].operator vector<ModelBase *> *()));
+                    break;
+            }
+        /* copy pointer - using same builder */
+        this->builder = model.builder;
+    }
 
     /**
      * IMPORTANT! Call this first, before everythings.
      * @return (ModelBase&) reference itself.
      */
     virtual ModelBase &initialize() {
+        data.clear();
         /* Assign default value */
         for (int i = 0; i < getFieldCount(); ++i)
             switch (getFieldType(i)) {
@@ -150,7 +151,7 @@ public:
     }
 
 
-    virtual Object &operator[](size_t index) {
+    virtual Object &operator[](size_t index) const {
         return *data[index];
     }
 
@@ -167,7 +168,7 @@ public:
      * Get number of fields (columns) in data table.
      * @return (int) number of fields (columns).
      */
-    virtual unsigned int getFieldCount() {
+    virtual unsigned int getFieldCount() const {
         return 0;
     }
 
@@ -177,7 +178,7 @@ public:
      * @return (DataType) data type.
      * @see enum DataType.
      */
-    virtual DataType getFieldType(int &fieldIndex) {
+    virtual DataType getFieldType(int &fieldIndex) const {
         return DataType::TYPE_INTEGER;
     };
 

@@ -7,10 +7,15 @@ set(SOURCE_FILES
         main.cpp
         model/ModelBase.cpp model/ModelBase.hpp
         model/Account.hpp
-        model/AccountManager.hpp
+        model/AccountManager.hpp model/AccountManager.cpp
         model/Product.hpp
         model/ProductManager.hpp
         utils/HashSum.hpp
         utils/Utils.cpp utils/Utils.hpp
-        utils/MenuHelper.cpp utils/MenuHelper.hpp)
+        utils/MenuHelper.cpp utils/MenuHelper.hpp
+        utils/ExportHTML.hpp utils/ExportHTML.cpp
+        utils/DateTimeFormat.cpp utils/DateTimeFormat.hpp
+        screen/LoginScreen.hpp screen/LoginScreen.cpp
+        screen/AdminScreen.cpp screen/AdminScreen.hpp
+        template/AccountListTemplate.hpp)
 add_executable(CppAssignment ${SOURCE_FILES})
