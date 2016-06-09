@@ -7,6 +7,7 @@
 
 
 #include <assert.h>
+#include <time.h>
 #include "ModelBase.hpp"
 
 static const int LEVEL_ADMIN = 0, LEVEL_MANAGER = 1;
