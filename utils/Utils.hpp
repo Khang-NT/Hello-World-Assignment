@@ -37,7 +37,7 @@ namespace Utils {
      * Password will be tranformed to hash code.
      * @param userId user ID of account to be updated.
      */
-    void doResetPassword(int userId);
+    void doResetPassword(int userId, int accountPosition = -1);
 
 
 

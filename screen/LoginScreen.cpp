@@ -36,7 +36,6 @@ namespace LoginScreen {
                         break;
                 }
             }
-            break;
         }
     }
 

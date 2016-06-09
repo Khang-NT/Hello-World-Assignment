@@ -32,15 +32,16 @@ public:
      * IMPORTANT! Call this first, before everythings.
      * @return (Product&) reference itself.
      */
-    Product &initialize(int produceId, string name, string manufacturer, string category, int price, int warrantyDays,
-                          int count = 0) {
+    Product &
+    initialize(int produceId, string name, string manufacturer, string category, int price, string warrantyInfo,
+               int count = 0) {
         ModelBase::initialize();
         setProductId(produceId)
                 .setProductName(name)
                 .setManufacturer(manufacturer)
                 .setCategory(category)
                 .setPrice(price)
-                .setWarranty(warrantyDays)
+                .setWarranty(warrantyInfo)
                 .setProductCount(count);
         return *this;
     }
@@ -81,8 +82,8 @@ public:
         return *this;
     }
 
-    Product &setWarranty(int warrantyDays) {
-        (*this)[WARRANTY_DAYS] = warrantyDays;
+    Product &setWarranty(string warrantyInfo) {
+        (*this)[WARRANTY_INFO] = warrantyInfo;
         (*this)[LAST_MODIFIED] = time(nullptr);
         return *this;
     }
@@ -100,11 +101,11 @@ public:
 
     /**
      * Update number of products available.
-     * @param offset changing offset
+     * @param offset changing offset.
      * @return (Product&) reference itself.
-     * @example
+     * @brief
      * <li> changeItemCount(-2); // sold 2 products, remove them in "available" products.
-     * <li> changeItemCount(5); // import 5 products to  "available" products will be sold.
+     * <li> changeItemCount(5); // imported 5 products to  "available" products will be sold.
      */
     Product &changeItemCount(int offset) {
         return setProductCount(getItemCount() + offset);
@@ -122,15 +123,15 @@ public:
         return (*this)[PRICE];
     }
 
-    int getWarrantyDays() {
-        return (*this)[WARRANTY_DAYS];
+    string getWarrantyInfo() {
+        return (*this)[WARRANTY_INFO];
     }
 
     string getManufacturer() {
         return (*this)[MANUFACTURER];
     }
 
-    int getCategory() {
+    string getCategory() {
         return (*this)[CATEGORY];
     }
 
@@ -147,7 +148,7 @@ protected:
     static const int ID = 0;
     static const int NAME = 1;
     static const int PRICE = 2;
-    static const int WARRANTY_DAYS = 3;
+    static const int WARRANTY_INFO = 3;
     static const int ITEM_COUNT = 4;
     static const int MANUFACTURER = 5;
     static const int CATEGORY = 6;
@@ -161,13 +162,13 @@ protected:
         switch (fieldIndex) {
             case ID:
             case PRICE:
-            case WARRANTY_DAYS:
             case ITEM_COUNT:
             case LAST_MODIFIED:
                 return TYPE_INTEGER;
             case NAME:
             case MANUFACTURER:
             case CATEGORY:
+            case WARRANTY_INFO:
                 return TYPE_STRING;
             default:
                 assert(false);

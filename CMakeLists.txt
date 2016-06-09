@@ -17,5 +17,5 @@ set(SOURCE_FILES
         utils/DateTimeFormat.cpp utils/DateTimeFormat.hpp
         screen/LoginScreen.hpp screen/LoginScreen.cpp
         screen/AdminScreen.cpp screen/AdminScreen.hpp
-        template/AccountListTemplate.hpp model/Account.cpp screen/ManagerScreen.cpp screen/ManagerScreen.hpp template/ProductListTemplate.hpp)
+        template/AccountListTemplate.hpp model/Account.cpp screen/ManagerScreen.cpp screen/ManagerScreen.hpp template/ProductListTemplate.hpp model/ProductManager.cpp)
 add_executable(CppAssignment ${SOURCE_FILES})

@@ -7,6 +7,7 @@
 #include "../utils/Utils.hpp"
 #include "../model/AccountManager.hpp"
 #include "../utils/ExportHTML.hpp"
+#include "ManagerScreen.hpp"
 
 namespace AdminScreen {
 
@@ -15,7 +16,7 @@ namespace AdminScreen {
     }
 
     void openManagerControlPanel() {
-
+        ManagerScreen::start(MenuHelper::GO_BACK_CAPTION);
     }
 
     void promptOpenAccountsViewer(const char *why) {
@@ -51,12 +52,24 @@ namespace AdminScreen {
             }
             if (AccountManager::getAccountAt(signedInAccountPosition).getUserId() == id)
                 printf("You cannot delete your account.\n");
-            else if (!AccountManager::removeAccountWith(id))
-                printf("Account ID not exist.\n");
             else {
-                printf("Remove account %d success!", id);
-                Utils::pause();
-                return;
+                int accountPosition = AccountManager::findAccountWith(id);
+                if (accountPosition < 0)
+                    printf("Account ID not exist.\n");
+                else {
+                    Account account = AccountManager::getAccountAt(accountPosition);
+                    printf("Remove account: %s - %s - staff ID: %s\n",
+                           account.getUserName().c_str(),
+                           account.getLevelAsString(),
+                           account.getStaffId());
+                    printf("Are you sure (y/n)? ");
+                    if (Utils::yesOrNo()) {
+                        AccountManager::removeAccountWith(id, accountPosition);
+                        printf("Remove account %d success!", id);
+                        Utils::pause();
+                    }
+                    return;
+                }
             }
             printf("Retry (y/n)? "); /* Let user retry */
             if (!Utils::yesOrNo())
@@ -80,7 +93,12 @@ namespace AdminScreen {
             if (accountPosition == -1)
                 printf("Account ID not exist.\n");
             else {
-                Utils::doResetPassword(id);
+                Account account = AccountManager::getAccountAt(accountPosition);
+                printf("Reset password of account: %s - %s - staff ID: %s\n",
+                       account.getUserName().c_str(),
+                       account.getLevelAsString(),
+                       account.getStaffId());
+                Utils::doResetPassword(id, accountPosition);
                 return;
             }
             printf("Retry (y/n)? "); /* Let user retry */

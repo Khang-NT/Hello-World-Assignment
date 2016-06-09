@@ -46,7 +46,7 @@ public:
             sInstance = Utils::deserialize<ProductManager>(ITEM_DB_FILE, ITEM_DB_FILE_HEADER);
         } catch (const char *e) {
             printf("Error while reading file %s: %s\n", ITEM_DB_FILE, e);
-            printf("Do you want to continue process and override file %s with empty data (y/n)? ");
+            printf("Do you want to continue process and override file %s with empty data (y/n)? ", ITEM_DB_FILE);
             if (Utils::yesOrNo()) {
                 /* Write default data (empty) */
                 sInstance = &(new ProductManager())->initialize();
@@ -120,6 +120,12 @@ public:
         *(*manager->getProductList())[position] = newData;
         manager->saveChange();
     }
+
+    static void removeProductAt(int position) {
+        *getInstance()->getProductList()[position].erase
+                (getInstance()->getProductList()->begin() + position);
+        getInstance()->saveChange();
+    }
 protected:
     static const int FIELD_COUNT = 2;
     //static const int HEADER = 0;
@@ -131,11 +137,11 @@ protected:
      */
     static ProductManager *sInstance;
 
-    virtual unsigned int getFieldCount() override {
+    virtual unsigned int getFieldCount() const override {
         return FIELD_COUNT;
     }
 
-    virtual DataType getFieldType(int &fieldIndex) override {
+    virtual DataType getFieldType(int &fieldIndex) const override {
         switch (fieldIndex) {
             //case HEADER:
             //return TYPE_STRING;

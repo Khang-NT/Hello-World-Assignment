@@ -7,24 +7,25 @@
 int signedInAccountPosition = -1;
 AccountManager *AccountManager::sInstance = nullptr;
 
-bool AccountManager::removeAccountWith(int userId) {
-    int position = findAccountWith(userId);
-    if (position > 0) {
+bool AccountManager::removeAccountWith(int userId, int accountPosition) {
+    if (accountPosition == -1)
+        accountPosition = findAccountWith(userId);
+    if (accountPosition > 0) {
         vector<ModelBase *> *accountList = getInstance()->getAccountList();
-        accountList->erase(accountList->begin() + position);
+        accountList->erase(accountList->begin() + accountPosition);
         getInstance()->saveChange();
         return true;
     }
     return false;
 }
 
-void AccountManager::changePassword(int userId, string newPassword) {
-    AccountManager *accountManager = getInstance();
-    int position = findAccountWith(userId);
-    if (position > 0) {
+void AccountManager::changePassword(int userId, string newPassword, int accountPosition) {
+    if (accountPosition < 0)
+        accountPosition = findAccountWith(userId);
+    if (accountPosition > 0) {
         vector<ModelBase *> accountList = *getInstance()->getAccountList();
-        ((Account *) accountList[position])->setPassword(newPassword);
-        accountManager->saveChange();
+        ((Account *) accountList[accountPosition])->setPassword(newPassword);
+        getInstance()->saveChange();
     }
 
 }

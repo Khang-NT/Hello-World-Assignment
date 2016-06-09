@@ -6,8 +6,10 @@
 #define CPPASSIGNMENT_MANAGERSCREEN_HPP
 
 
-class ManagerScreen {
+#include "../utils/MenuHelper.hpp"
 
+namespace ManagerScreen {
+    void start(string exitCaption = MenuHelper::LOG_OUT_CAPTION);
 };
 
 

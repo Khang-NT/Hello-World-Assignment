@@ -14,8 +14,11 @@ namespace Utils {
 
     bool yesOrNo() {
         string c = "";
-        while (c != "Y" && c != "y" && c != "N" && c != "n")
+        while (c != "Y" && c != "y" && c != "N" && c != "n") {
             getLine(cin, c);
+            cout << "fuck : " << c << endl;
+        }
+
         return (c == "y" || c == "Y");
     }
 
@@ -28,11 +31,7 @@ namespace Utils {
     }
 
     void pause() {
-#ifdef WINDOWS
-        system("pause");
-#else
-        system("read blabla");
-#endif
+        cin.get();
     }
 
     void doSignUp(int level) {
@@ -66,10 +65,10 @@ namespace Utils {
         }
     }
 
-    void doResetPassword(int userId) {
+    void doResetPassword(int userId, int accountPosition) {
         while (true) {
             string password;
-            printf("Password: ");
+            printf("New password: ");
             getLine(std::cin, password);
             if (password.length() < PASSWORD_MIN_LENGTH) {
                 printf("Password too short.\n");
@@ -77,7 +76,7 @@ namespace Utils {
                 if (!yesOrNo())
                     break;
             } else {
-                AccountManager::changePassword(userId, password);
+                AccountManager::changePassword(userId, password, accountPosition);
                 printf("Change password success!\n");
                 pause();
                 return;

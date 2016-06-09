@@ -15,7 +15,7 @@ const string USER_DB_FILE_HEADER = "MT2015-Users";
 const string USER_DB_FILE = "UserDB.dat";
 const string ADMIN_NAME = "admin";
 const string ADMIN_PASSWORD = "admin";
-static string ADMIN_STAFF_ID = "BOSS";
+const string ADMIN_STAFF_ID = "BOSS";
 
 /**
  * Global variant define position of current signed in account.
@@ -104,19 +104,22 @@ public:
     static void createAccount(string userName, string password, string staffId, int level);
 
     /**
-     * Change password of account which maches given ID, new data will be stored to disk automatically. <br>
+     * Change password of account with userId or specific position,
+     * new data will be stored to disk automatically. <br>
      * Password will be encoded with Hash algorithm.
      * @param userId (int) user name
+     * @param accountPosition (int) [optional] default = -1, if not set, search accountPosition with userId.
      * @param newPassword (string) new password.
      */
-    static void changePassword(int userId, string newPassword);
+    static void changePassword(int userId, string newPassword, int accountPosition = -1);
 
     /**
-     * Remove account with user ID.
+     * Remove account with user ID or specific position.
      * @param userId (int) user ID of account to be removed.
+     * @param accountPosition (int) [optional] default = -1, if not set, search accountPosition with userId.
      * @return (bool) return true if user Id is valid else return false.
      */
-    static bool removeAccountWith(int userId);
+    static bool removeAccountWith(int userId, int accountPosition = -1);
 
 protected:
     static const int FIELD_COUNT = 2;

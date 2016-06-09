@@ -5,6 +5,8 @@
 #include "ExportHTML.hpp"
 #include "../template/AccountListTemplate.hpp"
 #include "DateTimeFormat.hpp"
+#include "../template/ProductListTemplate.hpp"
+#include "../model/ProductManager.hpp"
 
 #include <algorithm>
 
@@ -63,6 +65,37 @@ namespace ExportHTML {
         open("account-snapshot.html");
     }
 
-    void exportProductList();
+    void exportProductList() {
+        string html = string(PRODUCT_LIST_TEMPLATE, PRODUCT_LIST_TEMPLATE + PRODUCT_LIST_TEMPLATE_LEN);
+        string time = DateTimeFormat::format(std::time(0), "dd/MM/yyyy HH:mm:ss");
+        replaceString(html, "%time%", time);
+        int productCount = ProductManager::getProductCount();
+        replaceString(html, "%total%", to_string(productCount));
+
+        string rows = "";
+        for (int i = 0; i < productCount; ++i) {
+            string row_template = string(PRODUCT_ROW_TEMPLATE, PRODUCT_ROW_TEMPLATE + PRODUCT_ROW_TEMPLATE_LEN);
+            Product product = ProductManager::getProductAt(i);
+            replaceString(row_template, "%odd%", to_string(i % 2), 8);
+            replaceString(row_template, "%id%", to_string(product.getProductId()));
+            replaceString(row_template, "%category%", product.getCategory());
+            replaceString(row_template, "%name%", product.getProductName());
+            replaceString(row_template, "%price%", to_string(product.getPrice()) + "$");
+            replaceString(row_template, "%warranty%", product.getWarrantyInfo());
+            replaceString(row_template, "%manufacturer%", product.getManufacturer());
+            replaceString(row_template, "%available%", to_string(product.getItemCount()));
+            replaceString(row_template, "%lastUpdate%",
+                          DateTimeFormat::format(product.getLastModifiedTime(), "yyyy-MM-dd HH:mm:ss"));
+
+            rows += row_template;
+        }
+
+        replaceString(html, "%rows%", rows);
+
+        ofstream f("items-snapshot.html");
+        f << html;
+        f.close();
+        open("items-snapshot.html");
+    }
 }
 
