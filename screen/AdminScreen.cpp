@@ -58,10 +58,10 @@ namespace AdminScreen {
                     printf("Account ID not exist.\n");
                 else {
                     Account account = AccountManager::getAccountAt(accountPosition);
-                    printf("Remove account: %s - %s - staff ID: %s\n",
-                           account.getUserName().c_str(),
-                           account.getLevelAsString(),
-                           account.getStaffId());
+                    printf("Remove account:\n");
+                    printf("    %-10s: %s\n", "User name", account.getUserName().c_str());
+                    printf("    %-10s: %s\n", "Level", account.getLevelAsString());
+                    printf("    %-10s: %s\n", "Staff ID", account.getStaffId().c_str());
                     printf("Are you sure (y/n)? ");
                     if (Utils::yesOrNo()) {
                         AccountManager::removeAccountWith(id, accountPosition);
@@ -94,12 +94,15 @@ namespace AdminScreen {
                 printf("Account ID not exist.\n");
             else {
                 Account account = AccountManager::getAccountAt(accountPosition);
-                printf("Reset password of account: %s - %s - staff ID: %s\n",
-                       account.getUserName().c_str(),
-                       account.getLevelAsString(),
-                       account.getStaffId());
-                Utils::doResetPassword(id, accountPosition);
-                return;
+                printf("Reset password of account:\n");
+                printf("               %-10s: %s\n", "User name", account.getUserName().c_str());
+                printf("               %-10s: %s\n", "Level", account.getLevelAsString());
+                printf("               %-10s: %s\n", "Staff ID", account.getStaffId().c_str());
+                printf("Are you sure (y/n)? ");
+                if (Utils::yesOrNo()) {
+                    Utils::doResetPassword(id, accountPosition);
+                    return;
+                }
             }
             printf("Retry (y/n)? "); /* Let user retry */
             if (!Utils::yesOrNo())

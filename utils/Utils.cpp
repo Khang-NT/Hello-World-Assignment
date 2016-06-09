@@ -14,11 +14,8 @@ namespace Utils {
 
     bool yesOrNo() {
         string c = "";
-        while (c != "Y" && c != "y" && c != "N" && c != "n") {
+        while (c != "Y" && c != "y" && c != "N" && c != "n")
             getLine(cin, c);
-            cout << "fuck : " << c << endl;
-        }
-
         return (c == "y" || c == "Y");
     }
 

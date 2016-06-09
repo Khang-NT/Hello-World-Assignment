@@ -6,6 +6,7 @@
 #include "../utils/MenuHelper.hpp"
 #include "../model/AccountManager.hpp"
 #include "AdminScreen.hpp"
+#include "ManagerScreen.hpp"
 
 namespace LoginScreen {
 
@@ -25,13 +26,14 @@ namespace LoginScreen {
                     break;
             } else {
                 signedInAccountPosition = accountPos; /* update global variant: an account has signed in */
+                accountManager->getAccountAt(accountPos).loggedIn();
                 switch (accountManager->getAccountAt(accountPos).getLevel()) {
                     case LEVEL_ADMIN:
                         AdminScreen::start();
-                        break;
+                        return;
                     case LEVEL_MANAGER:
-
-                        break;
+                        ManagerScreen::start();
+                        return;
                     default:
                         break;
                 }

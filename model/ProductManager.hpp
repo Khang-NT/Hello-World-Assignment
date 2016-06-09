@@ -21,6 +21,11 @@ const string ITEM_DB_FILE_HEADER = "MT2015-Shop";
  * @see class Product
  */
 class ProductManager : public ModelBase {
+private:
+    /**
+     * Singleton instance.
+     */
+    static ProductManager *sInstance;
 public:
     ProductManager() : ModelBase() {}
 
@@ -28,34 +33,14 @@ public:
      * IMPORTANT! Call this first, before everythings.
      * @return (ProductManager&) reference itself.
      */
-    ProductManager &initialize() override {
-        ModelBase::initialize();
-        //ModelBase::operator[](HEADER) = "MT2015-Shop";
-        return *this;
-    }
+    ProductManager &initialize() override;
 
     /**
      * Get singleton instance. <br>
      * If it wasn't created, do initialization with default data (include admin account).
      * @return (AccountManager &) singleton instance of AccountManager.
      */
-    static ProductManager *getInstance() {
-        if (sInstance)
-            return sInstance;
-        try {
-            sInstance = Utils::deserialize<ProductManager>(ITEM_DB_FILE, ITEM_DB_FILE_HEADER);
-        } catch (const char *e) {
-            printf("Error while reading file %s: %s\n", ITEM_DB_FILE, e);
-            printf("Do you want to continue process and override file %s with empty data (y/n)? ", ITEM_DB_FILE);
-            if (Utils::yesOrNo()) {
-                /* Write default data (empty) */
-                sInstance = &(new ProductManager())->initialize();
-                sInstance->saveChange();
-            } else
-                exit(0);
-        }
-        return sInstance;
-    }
+    static ProductManager *getInstance();
 
     /**
      * Get number of existing products.
@@ -79,16 +64,11 @@ public:
      * @param productId product's id.
      * @return position of product matches given ID or -1 if not found.
      */
-    static int findProduct(int productId) {
-        vector<ModelBase *> productList = *getInstance()->getProductList();
-        for (int i = 0; i < productList.size(); ++i)
-            if (((Product *) productList[i])->match(productId))
-                return i;
-        return -1;
-    }
+    static int findProduct(int productId);
 
     /**
-     * Add product.
+     * Add product.<br>
+     * After that, all data will be stored to disk automatically.
      * @param name
      * @param manufacturer
      * @param category
@@ -97,17 +77,8 @@ public:
      * @param count
      * @return Copy of new product object.
      */
-    static Product addProduct(string name, string manufacturer, string category, int price, int warrantyDays,
-                        int count = 0) {
-        ProductManager *productManager = getInstance();
-        Product *product = &(new Product())->initialize(
-                productManager->increaseUniqueIndex(),
-                name, manufacturer, category, price,
-                warrantyDays, count
-        );
-        productManager->getProductList()->push_back(product);
-        return *product;
-    }
+    static Product addProduct(string name, string manufacturer, string category, int price, string warrantyInfo,
+                              int count = 0);
 
     /**
      * Replace product at position with newData. <br>
@@ -115,73 +86,43 @@ public:
      * @param position (int)
      * @param newData (Product)
      */
-    static void updateProduct(int position, Product newData) {
-        ProductManager *manager = getInstance();
-        *(*manager->getProductList())[position] = newData;
-        manager->saveChange();
-    }
+    static void updateProduct(int position, Product newData);
 
-    static void removeProductAt(int position) {
-        *getInstance()->getProductList()[position].erase
-                (getInstance()->getProductList()->begin() + position);
-        getInstance()->saveChange();
-    }
+    /**
+     * Remove product at position.<br>
+     * After that, all data will be stored to disk automatically.
+     * @param position in product lists.
+     */
+    static void removeProductAt(int position);
 protected:
     static const int FIELD_COUNT = 2;
     //static const int HEADER = 0;
     static const int AUTO_INCREASE_NUMBER = 0;
     static const int ARRAY_OF_PRODUCTS = 1;
 
-    /**
-     * Singleton instance.
-     */
-    static ProductManager *sInstance;
+
 
     virtual unsigned int getFieldCount() const override {
         return FIELD_COUNT;
     }
 
-    virtual DataType getFieldType(int &fieldIndex) const override {
-        switch (fieldIndex) {
-            //case HEADER:
-            //return TYPE_STRING;
-            case AUTO_INCREASE_NUMBER:
-                return TYPE_INTEGER;
-            case ARRAY_OF_PRODUCTS:
-                return TYPE_ARRAY_OF_MODELS;
-            default:
-                assert(false);
-        }
-    }
+    virtual DataType getFieldType(int &fieldIndex) const override;
 
     virtual ModelBase *createVectorItem() override {
         return &(new Product())->initialize();
     }
 
     vector<ModelBase *> *getProductList() {
-        return ModelBase::operator[](TYPE_ARRAY_OF_MODELS);
+        return ModelBase::operator[](ARRAY_OF_PRODUCTS);
     };
 
-    int increaseUniqueIndex() {
-        int currentIndex = ModelBase::operator[](AUTO_INCREASE_NUMBER);
-        return ModelBase::operator[](AUTO_INCREASE_NUMBER) = ++currentIndex;
-    }
+    int increaseUniqueIndex();
 
     /**
      * Save product list to ITEM_DB_FILE file. <br>
      * Include hash sum to make sure nobody touch this file outside the program.
      */
-    void saveChange() {
-        try {
-            Utils::serialize(*this, ITEM_DB_FILE, ITEM_DB_FILE_HEADER);
-        } catch (const char *e) {
-            cout << "Update file " << ITEM_DB_FILE << " error: " << e << endl;
-            cout << "Warning: All changes will be aborted after closed program?\n"
-                    "Do you want to retry (y/n)? ";
-            if (Utils::yesOrNo())
-                saveChange();
-        }
-    }
+    void saveChange();
 };
 
 
