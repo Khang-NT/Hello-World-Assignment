@@ -28,8 +28,11 @@ namespace Utils {
     }
 
     void pause() {
-        cin.clear();
-        cin.get();
+#ifdef _WIN32
+        system("pause");
+#else
+        system("read nothing");
+#endif
     }
 
     void doSignUp(int level) {
