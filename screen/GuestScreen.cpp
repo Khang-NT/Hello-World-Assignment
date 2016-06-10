@@ -91,7 +91,6 @@ namespace GuestScreen {
     void viewCart() {
         if (cart.size() == 0) {
             printf("Cart is empty.");
-            cin.ignore();
         } else {
             printf("%-10s %-25s %-20s %-20s\n", "#", "Product name", "Number", "Amount money");
             int i = 0;
@@ -130,6 +129,11 @@ namespace GuestScreen {
     }
 
     void submitOrders() {
+        if (cart.size() == 0) {
+            printf("Cart is empty.\n");
+            Utils::pause();
+            return;
+        }
         string name, phone, address, additionInfo;
         printf("Please fill form information:\n");
         printf("Your name: ");
