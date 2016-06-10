@@ -259,6 +259,7 @@ namespace ManagerScreen {
                 }
             if (pendingOrderCount == 0) {
                 printf("\nNo pending order was found.");
+                cin.ignore();
                 Utils::pause();
                 break;
             } else
