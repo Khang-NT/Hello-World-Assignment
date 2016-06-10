@@ -87,7 +87,7 @@ namespace ManagerScreen {
         else if (field == 4)                            /* Price */
             product.setPrice(*newIntValue);
         else                                            /* Items available */
-            product.setProductCount(*newIntValue);
+            product.setItemCount(*newIntValue);
 
         ProductManager::updateProduct(productPosition, product);
 
@@ -126,14 +126,57 @@ namespace ManagerScreen {
                     ->addItem("Price (" + to_string(product.getPrice()) + "$)", editProduct, productPosition)
                     ->addItem("Available (" + to_string(product.getItemCount()) + ")", editProduct, productPosition);
 
-        } while (menuHelper->run(false));
+        } while (menuHelper->run(false)); /* While NOT select go back */
 
 
         delete menuHelper;
     }
 
     void removeAnItem() {
+        promptOpenProductListSnapshot("You need to know Product ID to use this function.\n");
+        int id, productPosition = -1;
+        while (productPosition == -1) {
+            printf("Product ID: ");
+            cin.clear();
+            do {
+                cin >> id;
+            } while (cin.fail());
 
+            productPosition = ProductManager::findProduct(id);
+            if (productPosition == -1) {
+                printf("Product ID invalid.\n");
+                printf("Retry (y/n)? "); /* Let user retry */
+                if (!Utils::yesOrNo())
+                    return;
+            }
+        }
+        Product product = ProductManager::getProductAt(productPosition);
+        printf("Remove product:\n");
+        printf("%-20s: %d\n", "ID", product.getProductId());
+        printf("%-20s: %s\n", "Product name", product.getProductName().c_str());
+        printf("%-20s: %s\n", "Category", product.getCategory().c_str());
+        printf("%-20s: %s\n", "Manufacturer", product.getManufacturer().c_str());
+        printf("%-20s: %s\n", "Warranty info", product.getWarrantyInfo().c_str());
+        printf("%-20s: %d$\n", "Price", product.getPrice());
+        printf("%-20s: %d item\n", "Available", product.getItemCount());
+
+        printf("Are you sure (y/n)? ");
+        if (Utils::yesOrNo()) {
+            ProductManager::removeProductAt(productPosition);
+            printf("Done. ");
+            Utils::pause();
+        }
+    }
+
+    void simpleStatistic() {
+        printf("Number of kind of products : %d\n", ProductManager::getProductCount());
+        int totalValue = 0;
+        for (int i = 0; i < ProductManager::getProductCount(); ++i) {
+            Product product = ProductManager::getProductAt(i);
+            totalValue += product.getPrice() * product.getItemCount();
+        }
+        printf("Total value                : %d$\n", totalValue);
+        Utils::pause();
     }
 
 
@@ -142,6 +185,7 @@ namespace ManagerScreen {
                 ->addItem("Add new item", addNewItem)
                 ->addItem("Edit an item", editAnItem)
                 ->addItem("Remove an item", removeAnItem)
+                ->addItem("Print statistic", simpleStatistic)
                 ->addItem("Open Item list snapshot", openItemListSnapshot);
         managerMenu->run(true);
     }

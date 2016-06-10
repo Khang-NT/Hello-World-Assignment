@@ -34,45 +34,23 @@ public:
             Object(new vector<ModelBase *>(dataArray)) { dataType = TYPE_ARRAY_OF_MODELS; }
 
     /* Operator conversion */
-    operator vector<ModelBase *> *() {
-        return static_cast<vector<ModelBase *> *>(value);
-    }
+    operator vector<ModelBase *> *();
 
-    operator int() {
-        return *static_cast<int *>(value);
-    }
+    operator int();
 
-    operator string() {
-        return *static_cast<string *>(value);
-    }
+    operator string();
 
-    operator void *() {
-        return value;
-    }
+    operator void *();
 
     /* operator = (copy assignment) */
-    Object &operator=(int newValue) {
-        freeMem();
-        value = new int(newValue);
-        dataType = TYPE_INTEGER;
-    }
+    Object &operator=(int newValue);
 
-    Object &operator=(string newValue) {
-        freeMem();
-        value = new string(newValue);
-        dataType = TYPE_STRING;
-    }
+    Object &operator=(string newValue);
 
-    Object &operator=(vector<ModelBase *> newValue) {
-        freeMem();
-        value = new vector<ModelBase *>(newValue);
-        dataType = TYPE_ARRAY_OF_MODELS;
-    }
+    Object &operator=(vector<ModelBase *> newValue);
 
     /* Destructor */
-    ~Object() {
-        freeMem();
-    }
+    ~Object();
 
 protected:
     void *value = nullptr;
@@ -98,6 +76,8 @@ public:
     /* Copy constructor */
     ModelBase(const ModelBase &model);
 
+    /* Main abstract methods */
+
     /**
      * IMPORTANT! Call this first, before everythings.
      * @return (ModelBase&) reference itself.
@@ -105,26 +85,13 @@ public:
     virtual ModelBase &initialize();
 
 
-    virtual Object &operator[](size_t index) const {
-        return *data[index];
-    }
-
-    ModelBase &with(HashSum::Builder &builder) {
-        this->builder = &builder;
-        return *this;
-    }
-
-    HashSum::Builder &getBuilder() {
-        return *builder;
-    }
+    virtual Object &operator[](size_t index) const;
 
     /**
      * Get number of fields (columns) in data table.
      * @return (int) number of fields (columns).
      */
-    virtual unsigned int getFieldCount() const {
-        return 0;
-    }
+    virtual unsigned int getFieldCount() const;
 
     /**
      * Get field (column) type at filedIndex.
@@ -132,17 +99,17 @@ public:
      * @return (DataType) data type.
      * @see enum DataType.
      */
-    virtual DataType getFieldType(int &fieldIndex) const {
-        return DataType::TYPE_INTEGER;
-    };
+    virtual DataType getFieldType(int &fieldIndex) const;;
 
-    virtual ModelBase *createVectorItem() {
-        return new ModelBase();
-    }
+    virtual ModelBase *createVectorItem();
 
-    ~ModelBase() {
-        data.clear();
-    }
+    void clearData();
+
+    ModelBase &with(HashSum::Builder &builder);
+
+    HashSum::Builder &getBuilder();
+
+    ~ModelBase();
 protected:
     vector<Object *> data;
     HashSum::Builder *builder;

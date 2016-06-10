@@ -23,81 +23,38 @@ public:
      * IMPORTANT! Call this first, before everythings.
      * @return (Product&) reference itself.
      */
-    Product &initialize() override {
-        ModelBase::initialize();
-        return *this;
-    }
+    Product &initialize() override;
 
     /**
      * IMPORTANT! Call this first, before everythings.
      * @return (Product&) reference itself.
      */
-    Product &
-    initialize(int produceId, string name, string manufacturer, string category, int price, string warrantyInfo,
-               int count = 0) {
-        ModelBase::initialize();
-        setProductId(produceId)
-                .setProductName(name)
-                .setManufacturer(manufacturer)
-                .setCategory(category)
-                .setPrice(price)
-                .setWarranty(warrantyInfo)
-                .setProductCount(count);
-        return *this;
-    }
+    Product &initialize(int produceId, string name, string manufacturer,
+                        string category, int price, string warrantyInfo,
+                        int count = 0);
 
     /* check if matching with unique properties */
-    bool match(int id) {
-        return getProductId() == id;
-    }
+    bool match(int id);
 
     /* set / get */
-    Product &setProductId(int id) {
-        (*this)[ID] = id;
-        (*this)[LAST_MODIFIED] = time(nullptr);
-        return *this;
-    }
+    Product &setProductId(int id);
 
-    Product &setProductName(string name) {
-        (*this)[NAME] = name;
-        (*this)[LAST_MODIFIED] = time(nullptr);
-        return *this;
-    }
+    Product &setProductName(string name);
 
-    Product &setManufacturer(string manufacturer) {
-        (*this)[MANUFACTURER] = manufacturer;
-        (*this)[LAST_MODIFIED] = time(nullptr);
-        return *this;
-    }
+    Product &setManufacturer(string manufacturer);
 
-    Product &setCategory(string category) {
-        (*this)[CATEGORY] = category;
-        (*this)[LAST_MODIFIED] = time(nullptr);
-        return *this;
-    }
+    Product &setCategory(string category);
 
-    Product &setPrice(int price) {
-        (*this)[PRICE] = price;
-        (*this)[LAST_MODIFIED] = time(nullptr);
-        return *this;
-    }
+    Product &setPrice(int price);
 
-    Product &setWarranty(string warrantyInfo) {
-        (*this)[WARRANTY_INFO] = warrantyInfo;
-        (*this)[LAST_MODIFIED] = time(nullptr);
-        return *this;
-    }
+    Product &setWarranty(string warrantyInfo);
 
     /**
      * Set number of products available.
      * @param count the number of products available.
      * @return (Product&) reference itself.
      */
-    Product &setProductCount(int count) {
-        (*this)[ITEM_COUNT] = count;
-        (*this)[LAST_MODIFIED] = time(nullptr);
-        return *this;
-    }
+    Product &setItemCount(int count);
 
     /**
      * Update number of products available.
@@ -107,43 +64,26 @@ public:
      * <li> changeItemCount(-2); // sold 2 products, remove them in "available" products.
      * <li> changeItemCount(5); // imported 5 products to  "available" products will be sold.
      */
-    Product &changeItemCount(int offset) {
-        return setProductCount(getItemCount() + offset);
-    }
+    Product &changeItemCount(int offset);
 
-    int getProductId() {
-        return (*this)[ID];
-    }
+    int getProductId();
 
-    string getProductName() {
-        return (*this)[NAME];
-    }
+    string getProductName();
 
-    int getPrice() {
-        return (*this)[PRICE];
-    }
+    int getPrice();
 
-    string getWarrantyInfo() {
-        return (*this)[WARRANTY_INFO];
-    }
+    string getWarrantyInfo();
 
-    string getManufacturer() {
-        return (*this)[MANUFACTURER];
-    }
+    string getManufacturer();
 
-    string getCategory() {
-        return (*this)[CATEGORY];
-    }
+    string getCategory();
 
-    int getItemCount() {
-        return (*this)[ITEM_COUNT];
-    }
+    int getItemCount();
 
-    int getLastModifiedTime() {
-        return (*this)[LAST_MODIFIED];
-    }
+    int getLastModifiedTime();
 
 protected:
+    /* Constants */
     static const int FIELD_COUNT = 8;
     static const int ID = 0;
     static const int NAME = 1;
@@ -154,26 +94,13 @@ protected:
     static const int CATEGORY = 6;
     static const int LAST_MODIFIED = 7;
 
-    virtual unsigned int getFieldCount() const override {
-        return FIELD_COUNT;
-    }
+    /* Override base funcs */
+    virtual unsigned int getFieldCount() const override;
 
-    virtual DataType getFieldType(int &fieldIndex) const override {
-        switch (fieldIndex) {
-            case ID:
-            case PRICE:
-            case ITEM_COUNT:
-            case LAST_MODIFIED:
-                return TYPE_INTEGER;
-            case NAME:
-            case MANUFACTURER:
-            case CATEGORY:
-            case WARRANTY_INFO:
-                return TYPE_STRING;
-            default:
-                assert(false);
-        }
-    }
+    virtual DataType getFieldType(int &fieldIndex) const override;
+
+    /* Make protected base's method */
+    virtual Object &operator[](size_t index) const override;
 };
 
 

@@ -93,3 +93,27 @@ void ProductManager::saveChange() {
             saveChange();
     }
 }
+
+unsigned ProductManager::getProductCount() {
+    return (unsigned) getInstance()->getProductList()->size();
+}
+
+Product ProductManager::getProductAt(int position) {
+    return *static_cast<Product *>((*getInstance()->getProductList())[position]);
+}
+
+unsigned int ProductManager::getFieldCount() const {
+    return FIELD_COUNT;
+}
+
+ModelBase *ProductManager::createVectorItem() {
+    return &(new Product())->initialize();
+}
+
+vector<ModelBase *> *ProductManager::getProductList() {
+    return ModelBase::operator[](ARRAY_OF_PRODUCTS);
+}
+
+Object &ProductManager::operator[](size_t index) const {
+    return ModelBase::operator[](index);
+}

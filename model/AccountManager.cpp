@@ -7,6 +7,33 @@
 int signedInAccountPosition = -1;
 AccountManager *AccountManager::sInstance = nullptr;
 
+AccountManager &AccountManager::initialize() {
+    ModelBase::initialize();
+    //ModelBase::operator[](HEADER) = "MT2015-Users";
+    return *this;
+}
+
+AccountManager *AccountManager::getInstance() {
+    if (sInstance)
+        return sInstance;
+    signedInAccountPosition = -1; /* Initialization, no account has logged in */
+    try {
+        sInstance = Utils::deserialize<AccountManager>(USER_DB_FILE, USER_DB_FILE_HEADER);
+    } catch (const char *e) {
+        cout << "Error: " << e << endl;
+        printf("Do you want to continue process and override file %s with default data (y/n)? ",
+               USER_DB_FILE.c_str());
+        if (Utils::yesOrNo()) {
+            /* Write default data */
+            sInstance = &(new AccountManager())->initialize();
+            createAccount(ADMIN_NAME, ADMIN_PASSWORD, ADMIN_STAFF_ID, LEVEL_ADMIN);
+        } else
+            exit(0);
+    }
+    return sInstance;
+}
+
+
 bool AccountManager::removeAccountWith(int userId, int accountPosition) {
     if (accountPosition == -1)
         accountPosition = findAccountWith(userId);
@@ -73,30 +100,9 @@ unsigned AccountManager::getAccountCount() {
     return (unsigned) getInstance()->getAccountList()->size();
 }
 
-AccountManager *AccountManager::getInstance() {
-    if (sInstance)
-        return sInstance;
-    signedInAccountPosition = -1; /* Initialization, no account has logged in */
-    try {
-        sInstance = Utils::deserialize<AccountManager>(USER_DB_FILE, USER_DB_FILE_HEADER);
-    } catch (const char *e) {
-        cout << "Error: " << e << endl;
-        printf("Do you want to continue process and override file %s with default data (y/n)? ",
-               USER_DB_FILE.c_str());
-        if (Utils::yesOrNo()) {
-            /* Write default data */
-            sInstance = &(new AccountManager())->initialize();
-            createAccount(ADMIN_NAME, ADMIN_PASSWORD, ADMIN_STAFF_ID, LEVEL_ADMIN);
-        } else
-            exit(0);
-    }
-    return sInstance;
-}
 
-AccountManager &AccountManager::initialize() {
-    ModelBase::initialize();
-    //ModelBase::operator[](HEADER) = "MT2015-Users";
-    return *this;
+unsigned int AccountManager::getFieldCount() const {
+    return FIELD_COUNT;
 }
 
 DataType AccountManager::getFieldType(int &fieldIndex) const {
@@ -114,10 +120,6 @@ DataType AccountManager::getFieldType(int &fieldIndex) const {
 
 ModelBase *AccountManager::createVectorItem() {
     return &(new Account())->initialize();
-}
-
-unsigned int AccountManager::getFieldCount() const {
-    return FIELD_COUNT;
 }
 
 vector<ModelBase *> *AccountManager::getAccountList() {
@@ -139,4 +141,8 @@ void AccountManager::saveChange() {
         if (Utils::yesOrNo())
             saveChange();
     }
+}
+
+Object &AccountManager::operator[](size_t index) const {
+    return ModelBase::operator[](index);
 }

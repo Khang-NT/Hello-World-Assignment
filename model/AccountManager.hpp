@@ -127,13 +127,18 @@ protected:
     static const int AUTO_INCREASE_NUMBER = 0;
     static const int ARRAY_OF_ACCOUNTS = 1;
 
+    /* Override base funcs */
     virtual unsigned int getFieldCount() const override;
 
     virtual DataType getFieldType(int &fieldIndex) const override;
 
     virtual ModelBase *createVectorItem() override;
 
+    /* Make protected base's method */
+    virtual Object &operator[](size_t index) const override;
 
+
+    /* protected funcs */
     vector<ModelBase *> *getAccountList();;
 
     int increaseUniqueIndex();

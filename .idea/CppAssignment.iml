@@ -5,13 +5,14 @@
       <sourceFolder url="file://$MODULE_DIR$/CMakeLists.txt" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/main.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/Account.cpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/model/AccountManager.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/ModelBase.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/ModelBase.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/AccountManager.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/ProductManager.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/Product.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/Account.hpp" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/model/AccountManager.hpp" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/model/Product.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/model/ProductManager.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/template/AccountListTemplate.hpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/template/ProductListTemplate.hpp" isTestSource="false" />

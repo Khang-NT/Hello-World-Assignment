@@ -46,18 +46,14 @@ public:
      * Get number of existing products.
      * @return (unsigned) number of existing products.
      */
-    static unsigned getProductCount() {
-        return (unsigned) getInstance()->getProductList()->size();
-    }
+    static unsigned getProductCount();
 
     /**
      * Get a COPY of product object at given position.
      * @param position (int)
      * @return (Product) a COPY of product object at position.
      */
-    static Product getProductAt(int position) {
-        return *static_cast<Product *>((*getInstance()->getProductList())[position]);
-    }
+    static Product getProductAt(int position);
 
     /**
      * Find product by given ID.
@@ -100,21 +96,17 @@ protected:
     static const int AUTO_INCREASE_NUMBER = 0;
     static const int ARRAY_OF_PRODUCTS = 1;
 
-
-
-    virtual unsigned int getFieldCount() const override {
-        return FIELD_COUNT;
-    }
+    /* Override base funcs */
+    virtual unsigned int getFieldCount() const override;
 
     virtual DataType getFieldType(int &fieldIndex) const override;
 
-    virtual ModelBase *createVectorItem() override {
-        return &(new Product())->initialize();
-    }
+    virtual ModelBase *createVectorItem() override;
 
-    vector<ModelBase *> *getProductList() {
-        return ModelBase::operator[](ARRAY_OF_PRODUCTS);
-    };
+    /* Make protected base's method */
+    virtual Object &operator[](size_t index) const override;
+
+    vector<ModelBase *> *getProductList();;
 
     int increaseUniqueIndex();
 

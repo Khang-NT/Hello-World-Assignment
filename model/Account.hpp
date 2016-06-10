@@ -36,93 +36,53 @@ public:
      */
     Account &initialize(int userId, string userName, string staffId, string password, int level);
 
-    /* check match with given unique properties value */
-    bool match(string userName) {
-        return getUserName() == userName;
-    }
+    /* check if matching with unique properties */
+    bool match(string userName);
 
     bool matchPassword(string password);
 
-    bool match(int userId) {
-        return getUserId() == userId;
-    }
+    bool match(int userId);
 
     /* set / get */
-    int getUserId() {
-        return (*this)[USER_ID];
-    }
+    int getUserId();
 
-    string getUserName() {
-        return (*this)[USER_NAME];
-    }
+    string getUserName();
 
-    int getPasswordHash() {
-        return (*this)[PASSWORD_HASH];
-    }
+    int getPasswordHash();
 
-    int getLevel() {
-        return (*this)[USER_LEVEL];
-    }
+    int getLevel();
 
     const char *getLevelAsString();
 
-    int getLastModified() {
-        return (*this)[LAST_MODIFIED];
-    }
+    int getLastModified();
 
-    int getLastLoginTime() {
-        return (*this)[LAST_LOGIN];
-    }
+    int getLastLoginTime();
 
-    string getStaffId() {
-        return (*this)[STAFF_ID];
-    }
+    string getStaffId();
 
-    Account &setUserId(int id) {
-        (*this)[USER_ID] = id;
-        return *this;
-    }
+    Account &setUserId(int id);
 
-    Account &setUserName(string userName) {
-        (*this)[USER_NAME] = userName;
-        return *this;
-    }
+    Account &setUserName(string userName);
 
-    Account &setPasswordHash(int passwordHash) {
-        (*this)[PASSWORD_HASH] = passwordHash;
-        return *this;
-    }
+    Account &setPasswordHash(int passwordHash);
 
     /**
      * Password will be transformed to hash code.
      * @param password (string)
      * @return (Account&) itself.
      */
-    Account &setPassword(string password) {
-        return setPasswordHash(HashSum::Builder().add(password).build());
-    }
+    Account &setPassword(string password);
 
-    Account &setLevel(int level) {
-        (*this)[USER_LEVEL] = level;
-        return *this;
-    }
+    Account &setLevel(int level);
 
-    Account &setStaffId(string staffId) {
-        (*this)[STAFF_ID] = staffId;
-        return *this;
-    }
+    Account &setStaffId(string staffId);
 
-    Account &modified() {
-        (*this)[LAST_MODIFIED] = time(0);
-        return *this;
-    }
+    Account &modified();
 
-    Account &loggedIn() {
-        (*this)[LAST_LOGIN] = time(0);
-        return *this;
-    }
+    Account &loggedIn();
 
 protected:
+    /* Constants */
     static const int FIELD_COUNT = 7;
     static const int USER_ID = 0;
     static const int USER_NAME = 1;
@@ -132,15 +92,13 @@ protected:
     static const int LAST_LOGIN = 5;
     static const int STAFF_ID = 6;
 
-    virtual unsigned int getFieldCount() const override {
-        return FIELD_COUNT;
-    }
+    /* Override base funcs */
+    virtual unsigned int getFieldCount() const override;
 
     virtual DataType getFieldType(int &fieldIndex) const override;
 
-    virtual Object &operator[](size_t index) const override {
-        return ModelBase::operator[](index);
-    }
+    /* Make protected base's method */
+    virtual Object &operator[](size_t index) const override;
 };
 
 
