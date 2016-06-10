@@ -11,14 +11,13 @@ Account &Account::initialize() {
 
 Account &Account::initialize(int userId, string userName, string staffId, string password, int level) {
     ModelBase::initialize();
-    setUserId(userId)
+    return setUserId(userId)
             .setUserName(userName)
             .setStaffId(staffId)
             .setPassword(password)
             .setLevel(level)
             .modified()
             .loggedIn();
-    return *this;
 }
 
 const char *Account::getLevelAsString() {

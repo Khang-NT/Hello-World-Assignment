@@ -12,14 +12,13 @@ Product &Product::initialize() {
 Product &Product::initialize(int produceId, string name, string manufacturer,
                              string category, int price, string warrantyInfo, int count) {
     ModelBase::initialize();
-    setProductId(produceId)
+    return setProductId(produceId)
             .setProductName(name)
             .setManufacturer(manufacturer)
             .setCategory(category)
             .setPrice(price)
             .setWarranty(warrantyInfo)
             .setItemCount(count);
-    return *this;
 }
 
 bool Product::match(int id) {

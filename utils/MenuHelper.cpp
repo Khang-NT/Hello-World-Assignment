@@ -16,12 +16,12 @@ MenuHelper *MenuHelper::addItem(string caption, function<void()> func) {
     return this;
 }
 
-MenuHelper *MenuHelper::addItem(string caption, function<void(int, int)> func, int &var) {
-    menus.push_back(make_tuple(caption, &func, &var));
+MenuHelper *MenuHelper::addItem(string caption, function<void(int, int)> func, int var) {
+    menus.push_back(make_tuple(caption, &func, new int(var)));
     return this;
 }
 
-int MenuHelper::run(bool loop) const {
+bool MenuHelper::run(bool loop) const {
     Utils::clearScreen();
     printf("---------------------- %s ----------------------\n", title.c_str());
 
@@ -41,7 +41,7 @@ int MenuHelper::run(bool loop) const {
     }
     switch (select) {
         case 0:
-            return 0;
+            return false;
         default:
             select--; /* Convert to index-base-0 of menu */
             printf("---------------------------> %s\n", std::get<0>(menus[select]).c_str());
@@ -60,7 +60,7 @@ int MenuHelper::run(bool loop) const {
             if (loop)
                 return run(true);
             else
-                return select + 1; /* Convert to index-base-1 of menu */
+                return true; /* Convert to index-base-1 of menu */
     }
 }
 

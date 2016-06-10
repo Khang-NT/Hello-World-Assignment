@@ -132,15 +132,8 @@ int AccountManager::increaseUniqueIndex() {
 }
 
 void AccountManager::saveChange() {
-    try {
-        Utils::serialize(*this, USER_DB_FILE, USER_DB_FILE_HEADER);
-    } catch (const char *e) {
-        cout << "Update file " << USER_DB_FILE << " error: " << e << endl;
-        cout << "Warning: All changes will be aborted after closed program?\n"
-                "Do you want to retry (y/n)? ";
-        if (Utils::yesOrNo())
-            saveChange();
-    }
+    Utils::serialize(*this, USER_DB_FILE, USER_DB_FILE_HEADER,
+                     "Warning: All changes will be aborted after closed program");
 }
 
 Object &AccountManager::operator[](size_t index) const {

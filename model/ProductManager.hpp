@@ -37,8 +37,8 @@ public:
 
     /**
      * Get singleton instance. <br>
-     * If it wasn't created, do initialization with default data (include admin account).
-     * @return (AccountManager &) singleton instance of AccountManager.
+     * If it wasn't created, do initialization with default data (empty).
+     * @return (ProductManager *) singleton instance of ProductManager.
      */
     static ProductManager *getInstance();
 

@@ -48,7 +48,7 @@ public:
     /**
      * Get singleton instance. <br>
      * If it wasn't created, do initialization with default data (include admin account).
-     * @return (AccountManager &) singleton instance of AccountManager.
+     * @return (AccountManager *) singleton instance of AccountManager.
      */
     static AccountManager *getInstance();
 

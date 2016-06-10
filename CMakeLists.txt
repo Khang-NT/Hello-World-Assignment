@@ -19,5 +19,5 @@ set(SOURCE_FILES
         screen/AdminScreen.cpp screen/AdminScreen.hpp
         screen/ManagerScreen.cpp screen/ManagerScreen.hpp
         template/AccountListTemplate.hpp model/Account.cpp
-        template/ProductListTemplate.hpp model/ProductManager.cpp model/Product.cpp)
+        template/ProductListTemplate.hpp model/ProductManager.cpp model/Product.cpp model/Order.cpp model/Order.hpp model/OrderManager.cpp model/OrderManager.hpp screen/GuestScreen.cpp screen/GuestScreen.hpp)
 add_executable(CppAssignment ${SOURCE_FILES})

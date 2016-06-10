@@ -7,6 +7,7 @@
 #include "../model/AccountManager.hpp"
 #include "AdminScreen.hpp"
 #include "ManagerScreen.hpp"
+#include "GuestScreen.hpp"
 
 namespace LoginScreen {
 
@@ -42,8 +43,7 @@ namespace LoginScreen {
     }
 
     void guest() {
-        printf("Log in as guest.");
-        Utils::pause();
+        GuestScreen::start();
     }
 
     void start() {

@@ -22,11 +22,16 @@ public:
 
     MenuHelper *addItem(string caption, function<void()> func);
 
-    MenuHelper *addItem(string caption, function<void(int, int)> func, int &var);
+    MenuHelper *addItem(string caption, function<void(int, int)> func, int var);
 
     MenuHelper *clear();
 
-    int run(bool showTitle) const;
+    /**
+     * Print menu to screen and navigate user choice to funcs.
+     * @param loop (bool) if true run loop until user choose EXIT.
+     * @return false if user choose EXIT else return true.
+     */
+    bool run(bool loop) const;
 
     static const string GO_BACK_CAPTION;
     static const string QUIT_CAPTION;

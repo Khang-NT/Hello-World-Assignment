@@ -29,7 +29,6 @@ namespace Utils {
 
     void pause() {
         cin.clear();
-        cin.ignore(1024, '\n');
         cin.get();
     }
 

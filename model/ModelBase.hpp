@@ -103,14 +103,13 @@ public:
 
     virtual ModelBase *createVectorItem();
 
-    void clearData();
-
     ModelBase &with(HashSum::Builder &builder);
 
     HashSum::Builder &getBuilder();
 
     ~ModelBase();
 protected:
+    void clearData();
     vector<Object *> data;
     HashSum::Builder *builder;
 };

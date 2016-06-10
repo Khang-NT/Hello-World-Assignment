@@ -78,20 +78,8 @@ DataType ProductManager::getFieldType(int &fieldIndex) const {
 }
 
 int ProductManager::increaseUniqueIndex() {
-    int currentIndex = ModelBase::operator[](AUTO_INCREASE_NUMBER);
-    return ModelBase::operator[](AUTO_INCREASE_NUMBER) = ++currentIndex;
-}
-
-void ProductManager::saveChange() {
-    try {
-        Utils::serialize(*this, ITEM_DB_FILE, ITEM_DB_FILE_HEADER);
-    } catch (const char *e) {
-        cout << "Update file " << ITEM_DB_FILE << " error: " << e << endl;
-        cout << "Warning: All changes will be aborted after closed program?\n"
-                "Do you want to retry (y/n)? ";
-        if (Utils::yesOrNo())
-            saveChange();
-    }
+    int currentIndex = (*this)[AUTO_INCREASE_NUMBER];
+    return (*this)[AUTO_INCREASE_NUMBER] = ++currentIndex;
 }
 
 unsigned ProductManager::getProductCount() {
@@ -111,9 +99,14 @@ ModelBase *ProductManager::createVectorItem() {
 }
 
 vector<ModelBase *> *ProductManager::getProductList() {
-    return ModelBase::operator[](ARRAY_OF_PRODUCTS);
+    return (*this)[ARRAY_OF_PRODUCTS];
 }
 
 Object &ProductManager::operator[](size_t index) const {
     return ModelBase::operator[](index);
+}
+
+void ProductManager::saveChange() {
+    Utils::serialize(*this, ITEM_DB_FILE, ITEM_DB_FILE_HEADER,
+                     "Warning: All products information will be lost after closed program");
 }

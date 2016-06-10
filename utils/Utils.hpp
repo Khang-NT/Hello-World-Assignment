@@ -40,7 +40,6 @@ namespace Utils {
     void doResetPassword(int userId, int accountPosition = -1);
 
 
-
     template<typename T, typename = typename std::enable_if<std::is_base_of<ModelBase, T>::value, T>::type>
     inline T *deserialize(string fileName, string header) throw(const char*) {
         ifstream file(fileName);
@@ -74,7 +73,7 @@ namespace Utils {
             throw "File does not exist!";
     };
 
-    inline void serialize(ModelBase &model, string fileName, string header = "") throw(const char*) {
+    inline void serialize(ModelBase &model, string fileName, string header, const char *errorConfirmMessage) {
         ofstream file;
         file.exceptions(std::ofstream::failbit | std::ofstream::badbit);
         try {
@@ -86,7 +85,12 @@ namespace Utils {
             file << builder.build();
             file.close();
         } catch (std::ofstream::failure &e) {
-            throw e.what();
+            printf("Occurs an error while writing to file %s : %s\n"
+                           "%s\n"
+                           "Do you want to retry (y/n)? ",
+                   fileName.c_str(), e.what(), errorConfirmMessage);
+            if (Utils::yesOrNo())
+                serialize(model, fileName, header, errorConfirmMessage);
         }
     };
 }
