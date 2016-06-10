@@ -12,16 +12,22 @@ const string MenuHelper::QUIT_CAPTION = "Quit";
 const string MenuHelper::LOG_OUT_CAPTION = "Log out";
 
 MenuHelper *MenuHelper::addItem(string caption, function<void()> func) {
-    menus.push_back(make_pair(caption, func));
+    menus.push_back(make_tuple(caption, &func, nullptr));
     return this;
 }
 
-void MenuHelper::run(bool showTitle) const {
+MenuHelper *MenuHelper::addItem(string caption, function<void(int, int)> func, int &var) {
+    menus.push_back(make_tuple(caption, &func, &var));
+    return this;
+}
+
+int MenuHelper::run(bool loop) const {
     Utils::clearScreen();
-    if (showTitle)
-        printf("---------------------- %s ----------------------\n", title.c_str());
+    printf("---------------------- %s ----------------------\n", title.c_str());
+
+    printf("%d. %s\n", 0, exitCaption.c_str());
     for (int i = 0; i < menus.size(); ++i)
-        printf("%d. %s\n", i, menus[i].first.c_str());
+        printf("%d. %s\n", i + 1, std::get<0>(menus[i]).c_str());
     printf("Select: ");
     int select = -1;
     cin >> select;
@@ -31,16 +37,47 @@ void MenuHelper::run(bool showTitle) const {
         cin >> select;
     }
     if (select < 0 || select > menus.size()) {
-        run(showTitle);
-        return;
+        return run(loop);
     }
     switch (select) {
         case 0:
-            return;
+            return 0;
         default:
-            printf("---------------------------> %s\n", menus[select].first.c_str());
-            menus[select].second();
-            run(showTitle);
+            select--; /* Convert to index-base-0 of menu */
+            printf("---------------------------> %s\n", std::get<0>(menus[select]).c_str());
+            if (std::get<2>(menus[select]) != nullptr) { /* If var != nullptr */
+                function<void(int, int)> func =
+                        *static_cast<function<void(int, int)> *>
+                        (std::get<1>(menus[select]));
+                int var = *((int *) std::get<2>(menus[select]));
+                func(var, select);
+            } else {
+                function<void()> func =
+                        *static_cast<function<void()> *>
+                        (std::get<1>(menus[select]));
+                func();
+            }
+            if (loop)
+                return run(true);
+            else
+                return select + 1; /* Convert to index-base-1 of menu */
     }
 }
+
+MenuHelper *MenuHelper::clear() {
+    menus.clear();
+    return this;
+}
+
+MenuHelper *MenuHelper::setCaptions(string title, string exitCaption) {
+    this->title = title;
+    this->exitCaption = exitCaption;
+    return this;
+}
+
+
+
+
+
+
 

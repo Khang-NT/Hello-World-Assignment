@@ -12,6 +12,13 @@ namespace ManagerScreen {
         ExportHTML::exportProductList();
     }
 
+    void promptOpenProductListSnapshot(const char *why) {
+        printf("%sDo you want open Items list Snapshot (Y/N)? ", why);
+        if (Utils::yesOrNo()) {
+            openItemListSnapshot();
+        }
+    }
+
     void addNewItem() {
         string name, category, manufacturer, warrantyInfo;
         int price, count;
@@ -24,9 +31,15 @@ namespace ManagerScreen {
         printf("Warranty information: ");
         Utils::getLine(cin, warrantyInfo);
         printf("Price ($): ");
-        cin >> price;
+        cin.clear();
+        do {
+            cin >> price;
+        } while (cin.fail());
         printf("Count: ");
-        cin >> count;
+        cin.clear();
+        do {
+            cin >> count;
+        } while (cin.fail());
         printf("Review:\n");
         printf("%-20s: %s\n", "Product name", name.c_str());
         printf("%-20s: %s\n", "Category", category.c_str());
@@ -44,8 +57,79 @@ namespace ManagerScreen {
         }
     }
 
-    void editAnItem() {
+    void editProduct(int productPosition, int field) {
+        string *newStringValue = new string;
+        int *newIntValue = new int;
+        printf("New value: ");
+        switch (field) {
+            case 0: /* Name */
+            case 1: /* Category */
+            case 3: /* Manufacturer */
+            case 4: /* Warranty */
+                Utils::getLine(cin, *newStringValue);
+                break;
+            default: /* Price, items available */
+                cin.clear();
+                do {
+                    cin >> *newIntValue;
+                } while (cin.fail());
+                break;
+        }
+        Product product = ProductManager::getProductAt(productPosition);
+        if (field == 0)                                 /* Name */
+            product.setProductName(*newStringValue);
+        else if (field == 1)                            /* Category */
+            product.setCategory(*newStringValue);
+        else if (field == 2)                            /* Manufacturer */
+            product.setManufacturer(*newStringValue);
+        else if (field == 3)                            /* Warranty */
+            product.setWarranty(*newStringValue);
+        else if (field == 4)                            /* Price */
+            product.setPrice(*newIntValue);
+        else                                            /* Items available */
+            product.setProductCount(*newIntValue);
 
+        ProductManager::updateProduct(productPosition, product);
+
+        delete newIntValue;
+        delete newStringValue;
+    }
+
+    void editAnItem() {
+        promptOpenProductListSnapshot("You need to know Product ID to use this function.\n");
+        int id, productPosition = -1;
+        while (productPosition == -1) {
+            printf("Product ID: ");
+            cin.clear();
+            do {
+                cin >> id;
+            } while (cin.fail());
+
+            productPosition = ProductManager::findProduct(id);
+            if (productPosition == -1) {
+                printf("Product ID invalid.\n");
+                printf("Retry (y/n)? "); /* Let user retry */
+                if (!Utils::yesOrNo())
+                    return;
+            }
+        }
+        MenuHelper *menuHelper = new MenuHelper();
+        do {
+            Product product = ProductManager::getProductAt(productPosition);
+            menuHelper->setCaptions("Update product with ID: " + to_string(product.getProductId()),
+                                    MenuHelper::GO_BACK_CAPTION)
+                    ->clear()
+                    ->addItem("Name (" + product.getProductName() + ")", editProduct, productPosition)
+                    ->addItem("Category (" + product.getCategory() + ")", editProduct, productPosition)
+                    ->addItem("Manufacturer (" + product.getManufacturer() + ")", editProduct, productPosition)
+                    ->addItem("Warranty info (" + product.getWarrantyInfo() + ")", editProduct, productPosition)
+                    ->addItem("Price (" + to_string(product.getPrice()) + "$)", editProduct, productPosition)
+                    ->addItem("Available (" + to_string(product.getItemCount()) + ")", editProduct, productPosition);
+
+        } while (menuHelper->run(false));
+
+
+        delete menuHelper;
     }
 
     void removeAnItem() {
